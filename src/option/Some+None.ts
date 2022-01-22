@@ -3,6 +3,7 @@ interface IOption {
   isNone(): boolean;
   get(): unknown;
   value(defaultValue: unknown): unknown;
+  // TODO: toResult(none: unknown): Result<unknown, unknown>;
 }
 
 export class Some<T> implements IOption {
