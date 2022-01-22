@@ -31,5 +31,8 @@ module.exports = {
         next: ["return", "throw", "break", "continue"],
       },
     ],
+
+    // 未使用引数を許可
+    "@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
   },
 };

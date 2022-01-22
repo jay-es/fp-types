@@ -25,7 +25,6 @@ export class Some<T> implements IOption {
     return this.#value;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   value(defaultValue: T): T {
     return this.#value;
   }

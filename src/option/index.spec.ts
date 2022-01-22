@@ -32,8 +32,9 @@ describe("Option", () => {
   describe("get", () => {
     it("Some", () => {
       const some = new Some("foo") as Option<string>;
-
       const value = some.get();
+
+      // string に推論される
       assertType<Equal<typeof value, string>>();
     });
 
