@@ -62,10 +62,10 @@ describe("Left, Right", () => {
     it("Right", () => {
       const right = new Right(42);
       const mappedLeft = right.mapLeft((never) => false);
-      const mappedRight = right.mapRight((value) => value.toFixed());
+      const mappedRight = right.mapRight((value) => value.toFixed(1));
 
       expect(mappedLeft).toEqual(right);
-      expect(mappedRight).toEqual(new Right("42"));
+      expect(mappedRight).toEqual(new Right("42.0"));
     });
   });
 
@@ -84,10 +84,10 @@ describe("Left, Right", () => {
       const right = new Right(42);
       const mapped = right.map(
         (never) => false,
-        (value) => value.toFixed()
+        (value) => value.toFixed(1)
       );
 
-      expect(mapped).toEqual(new Right("42"));
+      expect(mapped).toEqual(new Right("42.0"));
     });
   });
 
@@ -95,21 +95,21 @@ describe("Left, Right", () => {
     it("Left", () => {
       const left = new Left("foo");
       const folded = left.fold(
-        (value) => Symbol(value.substring(0)),
+        (value) => Symbol(value.substring(1)),
         (never) => Symbol()
       );
 
-      expect(folded.description).toBe("foo");
+      expect(folded.description).toBe("oo");
     });
 
     it("Right", () => {
       const right = new Right(42);
       const folded = right.fold(
         (never) => Symbol(),
-        (value) => Symbol(value.toFixed())
+        (value) => Symbol(value.toFixed(1))
       );
 
-      expect(folded.description).toBe("42");
+      expect(folded.description).toBe("42.0");
     });
   });
 

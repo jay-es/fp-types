@@ -77,10 +77,10 @@ describe("Ok, Err", () => {
     it("Err", () => {
       const err = new Err(42);
       const mapped = err.map((never) => false);
-      const mappedErr = err.mapErr((error) => error.toFixed());
+      const mappedErr = err.mapErr((error) => error.toFixed(1));
 
       expect(mapped).toEqual(err);
-      expect(mappedErr).toEqual(new Err("42"));
+      expect(mappedErr).toEqual(new Err("42.0"));
     });
   });
 
@@ -88,21 +88,21 @@ describe("Ok, Err", () => {
     it("Ok", () => {
       const ok = new Ok("foo");
       const folded = ok.fold(
-        (value) => Symbol(value.substring(0)),
+        (value) => Symbol(value.substring(1)),
         (never) => Symbol()
       );
 
-      expect(folded.description).toBe("foo");
+      expect(folded.description).toBe("oo");
     });
 
     it("Err", () => {
       const err = new Err(42);
       const folded = err.fold(
         (never) => Symbol(),
-        (error) => Symbol(error.toFixed())
+        (error) => Symbol(error.toFixed(1))
       );
 
-      expect(folded.description).toBe("42");
+      expect(folded.description).toBe("42.0");
     });
   });
 

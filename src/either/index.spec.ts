@@ -82,7 +82,7 @@ describe("Either", () => {
     it("Left", () => {
       const left = new Left("foo") as Either<string, number>;
       const optionLeft = left.mapLeft((value) => value.endsWith("a"));
-      const optionRight = left.mapRight((value) => value.toFixed());
+      const optionRight = left.mapRight((value) => value.toFixed(1));
 
       // 片方が変換された Either 型に推論される
       assertType<Equal<typeof optionLeft, Either<boolean, number>>>();
@@ -92,7 +92,7 @@ describe("Either", () => {
     it("Right", () => {
       const right = new Right(42) as Either<string, number>;
       const optionLeft = right.mapLeft((value) => value.endsWith("a"));
-      const optionRight = right.mapRight((value) => value.toFixed());
+      const optionRight = right.mapRight((value) => value.toFixed(1));
 
       // 片方が変換された Either 型に推論される
       assertType<Equal<typeof optionLeft, Either<boolean, number>>>();
@@ -105,7 +105,7 @@ describe("Either", () => {
       const left = new Left("foo") as Either<string, number>;
       const mapped = left.map(
         (value) => value.endsWith("a"),
-        (value) => value.toFixed()
+        (value) => value.toFixed(1)
       );
 
       // 両方とも変換された Either 型に推論される
@@ -116,7 +116,7 @@ describe("Either", () => {
       const right = new Right(42) as Either<string, number>;
       const mapped = right.map(
         (value) => value.endsWith("a"),
-        (value) => value.toFixed()
+        (value) => value.toFixed(1)
       );
 
       // 両方とも変換された Either 型に推論される
@@ -128,8 +128,8 @@ describe("Either", () => {
     it("Left", () => {
       const left = new Left("foo") as Either<string, number>;
       const folded = left.fold(
-        (value) => Symbol(value.substring(0)),
-        (value) => Symbol(value.toFixed())
+        (value) => Symbol(value.substring(1)),
+        (value) => Symbol(value.toFixed(1))
       );
 
       // 変換された型に推論される
@@ -139,8 +139,8 @@ describe("Either", () => {
     it("Right", () => {
       const right = new Right(42) as Either<string, number>;
       const folded = right.fold(
-        (value) => Symbol(value.substring(0)),
-        (value) => Symbol(value.toFixed())
+        (value) => Symbol(value.substring(1)),
+        (value) => Symbol(value.toFixed(1))
       );
 
       // 変換された型に推論される

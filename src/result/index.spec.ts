@@ -105,7 +105,7 @@ describe("Result", () => {
     it("Ok", () => {
       const ok = new Ok("foo") as Result<string, number>;
       const mapped = ok.map((value) => value.endsWith("a"));
-      const mappedErr = ok.mapErr((error) => error.toFixed());
+      const mappedErr = ok.mapErr((error) => error.toFixed(1));
 
       // 片方が変換された Result 型に推論される
       assertType<Equal<typeof mapped, Result<boolean, number>>>();
@@ -115,7 +115,7 @@ describe("Result", () => {
     it("Err", () => {
       const err = new Err(42) as Result<string, number>;
       const mapped = err.map((value) => value.endsWith("a"));
-      const mappedErr = err.mapErr((error) => error.toFixed());
+      const mappedErr = err.mapErr((error) => error.toFixed(1));
 
       // 片方が変換された Result 型に推論される
       assertType<Equal<typeof mapped, Result<boolean, number>>>();
@@ -128,7 +128,7 @@ describe("Result", () => {
       const ok = new Ok("foo") as Result<string, number>;
       const folded = ok.fold(
         (value) => Symbol(value.substring(1)),
-        (error) => Symbol(error.toFixed())
+        (error) => Symbol(error.toFixed(1))
       );
 
       // 変換された型に推論される
@@ -139,7 +139,7 @@ describe("Result", () => {
       const err = new Err(42) as Result<string, number>;
       const folded = err.fold(
         (value) => Symbol(value.substring(1)),
-        (error) => Symbol(error.toFixed())
+        (error) => Symbol(error.toFixed(1))
       );
 
       // 変換された型に推論される
