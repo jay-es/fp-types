@@ -12,9 +12,9 @@ interface IResult {
     okFn: (v1: unknown, v2: unknown) => boolean,
     errFn: (e1: unknown, e2: unknown) => boolean
   ): boolean;
-  bind(fn: (value: unknown) => unknown): IResult;
-  map(fn: (value: unknown) => unknown): IResult;
-  mapErr(fn: (value: unknown) => unknown): IResult;
+  bind<U>(fn: (value: unknown) => Ok<U>): IResult;
+  map<U>(fn: (value: unknown) => U): IResult;
+  mapErr<F>(fn: (value: unknown) => F): IResult;
   fold<U>(okFn: (value: unknown) => U, errFn: (error: unknown) => U): U;
   iter(fn: (value: unknown) => void): void;
   iterErr(fn: (value: unknown) => void): void;
