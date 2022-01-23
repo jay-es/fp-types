@@ -78,6 +78,48 @@ describe("Either", () => {
     });
   });
 
+  describe("equal", () => {
+    it("Left", () => {
+      const left1 = new Left("foo") as Either<string, number>;
+      const left2 = new Left("foo") as Either<string, number>;
+
+      // 引数の型をテスト
+      left1.equal(
+        left2,
+        (l1, l2) => {
+          assertType<Equal<typeof l1, string>>();
+          assertType<Equal<typeof l2, string>>();
+          return true;
+        },
+        (r1, r2) => {
+          assertType<Equal<typeof r1, number>>();
+          assertType<Equal<typeof r2, number>>();
+          return true;
+        }
+      );
+    });
+
+    it("Right", () => {
+      const right1 = new Right(42) as Either<string, number>;
+      const right2 = new Right(42) as Either<string, number>;
+
+      // 引数の型をテスト
+      right1.equal(
+        right2,
+        (l1, l2) => {
+          assertType<Equal<typeof l1, string>>();
+          assertType<Equal<typeof l2, string>>();
+          return true;
+        },
+        (r1, r2) => {
+          assertType<Equal<typeof r1, number>>();
+          assertType<Equal<typeof r2, number>>();
+          return true;
+        }
+      );
+    });
+  });
+
   describe("mapLeft, mapRight", () => {
     it("Left", () => {
       const left = new Left("foo") as Either<string, number>;

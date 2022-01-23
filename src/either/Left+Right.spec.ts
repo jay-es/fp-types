@@ -37,15 +37,45 @@ describe("Left, Right", () => {
     it("Left", () => {
       const left = new Left("foo");
 
-      expect(left.findLeft()).toEqual(new Some("foo"));
-      expect(left.findRight()).toEqual(new None());
+      expect(left.findLeft().equal(new Some("foo"))).toBe(true);
+      expect(left.findRight().equal(new None())).toBe(true);
     });
 
     it("Right", () => {
       const right = new Right(42);
 
-      expect(right.findLeft()).toEqual(new None());
-      expect(right.findRight()).toEqual(new Some(42));
+      expect(right.findLeft().equal(new None())).toBe(true);
+      expect(right.findRight().equal(new Some(42))).toBe(true);
+    });
+  });
+
+  describe("equal", () => {
+    it("Left", () => {
+      const left1 = new Left("foo");
+      const left2 = new Left("foo");
+      const left3 = new Left("bar");
+      const right = new Right("foo");
+
+      const isSameLength = (a: string, b: string) => a.length === b.length;
+
+      expect(left1.equal(left2)).toBe(true);
+      expect(left1.equal(left3)).toBe(false);
+      expect(left1.equal(left3, isSameLength)).toBe(true);
+      expect(left1.equal(right)).toBe(false);
+    });
+
+    it("Right", () => {
+      const right1 = new Right(42);
+      const right2 = new Right(42);
+      const right3 = new Right(7);
+      const left = new Left(42);
+
+      const isDivisor = (a: number, b: number) => a % b === 0;
+
+      expect(right1.equal(right2)).toBe(true);
+      expect(right1.equal(right3)).toBe(false);
+      expect(right1.equal(right3, undefined, isDivisor)).toBe(true);
+      expect(right1.equal(left)).toBe(false);
     });
   });
 
@@ -55,8 +85,8 @@ describe("Left, Right", () => {
       const mappedLeft = left.mapLeft((value) => value.endsWith("a"));
       const mappedRight = left.mapRight((never) => 7);
 
-      expect(mappedLeft).toEqual(new Left(false));
-      expect(mappedRight).toEqual(left);
+      expect(mappedLeft.equal(new Left(false))).toBe(true);
+      expect(mappedRight.equal(left)).toBe(true);
     });
 
     it("Right", () => {
@@ -64,8 +94,8 @@ describe("Left, Right", () => {
       const mappedLeft = right.mapLeft((never) => false);
       const mappedRight = right.mapRight((value) => value.toFixed(1));
 
-      expect(mappedLeft).toEqual(right);
-      expect(mappedRight).toEqual(new Right("42.0"));
+      expect(mappedLeft.equal(right)).toBe(true);
+      expect(mappedRight.equal(new Right("42.0"))).toBe(true);
     });
   });
 
@@ -77,7 +107,7 @@ describe("Left, Right", () => {
         (never) => 7
       );
 
-      expect(mapped).toEqual(new Left(false));
+      expect(mapped.equal(new Left(false))).toBe(true);
     });
 
     it("Right", () => {
@@ -87,7 +117,7 @@ describe("Left, Right", () => {
         (value) => value.toFixed(1)
       );
 
-      expect(mapped).toEqual(new Right("42.0"));
+      expect(mapped.equal(new Right("42.0"))).toBe(true);
     });
   });
 

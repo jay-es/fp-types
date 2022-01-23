@@ -1,10 +1,16 @@
 import { None, Option, Some } from "../option";
+import { equalFn } from "../utils";
 
 interface IEither {
   isLeft(): boolean;
   isRight(): boolean;
   findLeft(): Option<unknown>;
   findRight(): Option<unknown>;
+  equal(
+    other: IEither,
+    leftFn?: (l1: unknown, l2: unknown) => boolean,
+    rightFn?: (r1: unknown, r2: unknown) => boolean
+  ): boolean;
   mapLeft<T>(fn: (left: unknown) => T): IEither;
   mapRight<U>(fn: (right: unknown) => U): IEither;
   map<T, U>(
@@ -48,6 +54,14 @@ export class Left<L> implements IEither {
 
   findRight(): None {
     return new None();
+  }
+
+  equal(
+    other: Left<L> | Right<unknown>,
+    leftFn: (l1: L, l2: L) => boolean = equalFn,
+    rightFn: (r1: never, r2: never) => boolean = equalFn
+  ): boolean {
+    return other.isLeft() && leftFn(this.#value, other.valueLeft());
   }
 
   mapLeft<T>(fn: (left: L) => T): Left<T> {
@@ -104,6 +118,14 @@ export class Right<R> implements IEither {
 
   findRight(): Some<R> {
     return new Some(this.#value);
+  }
+
+  equal(
+    other: Left<unknown> | Right<R>,
+    leftFn: (l1: never, l2: never) => boolean = equalFn,
+    rightFn: (r1: R, r2: R) => boolean = equalFn
+  ): boolean {
+    return other.isRight() && rightFn(this.#value, other.valueRight());
   }
 
   mapLeft<T>(fn: (left: never) => T): Right<R> {

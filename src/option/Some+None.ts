@@ -1,3 +1,5 @@
+import { equalFn } from "../utils";
+
 interface IOption {
   isSome(): boolean;
   isNone(): boolean;
@@ -10,8 +12,6 @@ interface IOption {
   iter(fn: (value: unknown) => void): void;
   // TODO: toResult(none: unknown): Result<unknown, unknown>;
 }
-
-const equalFn = <T>(v1: T, v2: T): boolean => v1 === v2;
 
 export class Some<T> implements IOption {
   readonly #value: T;
