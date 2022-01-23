@@ -74,4 +74,74 @@ describe("Option", () => {
       assertType<Equal<typeof value, string>>();
     });
   });
+
+  describe("bind", () => {
+    it("Some", () => {
+      const some = new Some("foo") as Option<string>;
+      const bound = some.bind((value) => new Some(value.endsWith("a")));
+
+      // 変換された Option 型に推論される
+      assertType<Equal<typeof bound, Option<boolean>>>();
+    });
+
+    it("None", () => {
+      const none = new None() as Option<string>;
+      const bound = none.bind((value) => new Some(7));
+
+      // 変換された Option 型に推論される
+      assertType<Equal<typeof bound, Option<number>>>();
+    });
+  });
+
+  describe("map", () => {
+    it("Some", () => {
+      const some = new Some("foo") as Option<string>;
+      const mapped = some.map((value) => value.endsWith("a"));
+
+      // 変換された Option 型に推論される
+      assertType<Equal<typeof mapped, Option<boolean>>>();
+    });
+
+    it("None", () => {
+      const none = new None() as Option<string>;
+      const mapped = none.map((value) => 7);
+
+      // 変換された Option 型に推論される
+      assertType<Equal<typeof mapped, Option<number>>>();
+    });
+  });
+
+  describe("fold", () => {
+    it("Some", () => {
+      const some = new Some("foo") as Option<string>;
+      const folded = some.fold(true, (value) => value.endsWith("a"));
+
+      // 変換された Option 型に推論される
+      assertType<Equal<typeof folded, boolean>>();
+    });
+
+    it("None", () => {
+      const none = new None() as Option<string>;
+      const folded = none.fold(true, (value) => value.endsWith("a"));
+
+      // 変換された Option 型に推論される
+      assertType<Equal<typeof folded, boolean>>();
+    });
+  });
+
+  describe("iter", () => {
+    it("Some", () => {
+      const some = new Some("foo") as Option<string>;
+
+      // 引数の型をテスト
+      some.iter((value) => assertType<Equal<typeof value, string>>());
+    });
+
+    it("None", () => {
+      const none = new None() as Option<string>;
+
+      // 引数の型をテスト
+      none.iter((value) => assertType<Equal<typeof value, string>>());
+    });
+  });
 });
