@@ -3,8 +3,8 @@ import { equalFn } from "../utils";
 interface IOption {
   isSome(): boolean;
   isNone(): boolean;
-  get(): unknown;
   value(defaultValue: unknown): unknown;
+  get(): unknown;
   equal(other: IOption, fn?: (v1: unknown, v2: unknown) => boolean): boolean;
   bind<U>(fn: (value: unknown) => Some<U>): IOption;
   map<U>(fn: (value: unknown) => U): IOption;
@@ -28,11 +28,11 @@ export class Some<T> implements IOption {
     return false;
   }
 
-  get(): T {
+  value(defaultValue: T): T {
     return this.#value;
   }
 
-  value(defaultValue: T): T {
+  get(): T {
     return this.#value;
   }
 
@@ -69,12 +69,12 @@ export class None implements IOption {
     return true;
   }
 
-  get(): never {
-    throw new Error("Cannot get value of None");
-  }
-
   value<T>(defaultValue: T): T {
     return defaultValue;
+  }
+
+  get(): never {
+    throw new Error("Cannot get value of None");
   }
 
   equal<T>(

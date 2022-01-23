@@ -18,20 +18,6 @@ describe("Some, None", () => {
     });
   });
 
-  describe("get", () => {
-    it("Some", () => {
-      const some = new Some("foo");
-
-      expect(some.get()).toBe("foo");
-    });
-
-    it("None", () => {
-      const none = new None();
-
-      expect(() => none.get()).toThrow();
-    });
-  });
-
   describe("value", () => {
     it("Some", () => {
       const some = new Some("foo");
@@ -43,6 +29,20 @@ describe("Some, None", () => {
       const none = new None();
 
       expect(none.value("bar")).toBe("bar");
+    });
+  });
+
+  describe("get", () => {
+    it("Some", () => {
+      const some = new Some("foo");
+
+      expect(some.get()).toBe("foo");
+    });
+
+    it("None", () => {
+      const none = new None();
+
+      expect(() => none.get()).toThrow();
     });
   });
 

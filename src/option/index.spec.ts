@@ -29,26 +29,6 @@ describe("Option", () => {
     });
   });
 
-  describe("get", () => {
-    it("Some", () => {
-      const some = new Some("foo") as Option<string>;
-      const value = some.get();
-
-      // string に推論される
-      assertType<Equal<typeof value, string>>();
-    });
-
-    it("None", () => {
-      const none = new None() as Option<string>;
-
-      expect(() => {
-        // 実際にはエラーになるが、string に推論される
-        const value = none.get();
-        assertType<Equal<typeof value, string>>();
-      }).toThrow();
-    });
-  });
-
   describe("value", () => {
     it("Some", () => {
       const some = new Some("foo") as Option<string>;
@@ -72,6 +52,26 @@ describe("Option", () => {
 
       const value = none.value("bar");
       assertType<Equal<typeof value, string>>();
+    });
+  });
+
+  describe("get", () => {
+    it("Some", () => {
+      const some = new Some("foo") as Option<string>;
+      const value = some.get();
+
+      // string に推論される
+      assertType<Equal<typeof value, string>>();
+    });
+
+    it("None", () => {
+      const none = new None() as Option<string>;
+
+      expect(() => {
+        // 実際にはエラーになるが、string に推論される
+        const value = none.get();
+        assertType<Equal<typeof value, string>>();
+      }).toThrow();
     });
   });
 

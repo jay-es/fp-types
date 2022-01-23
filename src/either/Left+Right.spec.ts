@@ -19,20 +19,6 @@ describe("Left, Right", () => {
     });
   });
 
-  describe("value", () => {
-    it("Left", () => {
-      const left = new Left("foo");
-
-      expect(left.valueLeft()).toBe("foo");
-    });
-
-    it("Right", () => {
-      const right = new Right(42);
-
-      expect(right.valueRight()).toBe(42);
-    });
-  });
-
   describe("findLeft, findRight", () => {
     it("Left", () => {
       const left = new Left("foo");
@@ -46,6 +32,22 @@ describe("Left, Right", () => {
 
       expect(right.findLeft().equal(new None())).toBe(true);
       expect(right.findRight().equal(new Some(42))).toBe(true);
+    });
+  });
+
+  describe("getLeft, getRight", () => {
+    it("Left", () => {
+      const left = new Left("foo");
+
+      expect(left.getLeft()).toBe("foo");
+      expect(() => left.getRight()).toThrow();
+    });
+
+    it("Right", () => {
+      const right = new Right(42);
+
+      expect(() => right.getLeft()).toThrow();
+      expect(right.getRight()).toBe(42);
     });
   });
 

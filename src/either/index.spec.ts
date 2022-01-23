@@ -1,4 +1,4 @@
-import { describe, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import { assertType, Equal } from "~/test/assert";
 import type { Option } from "../option";
 import { Either, Left, Right } from "./index";
@@ -30,32 +30,6 @@ describe("Either", () => {
     });
   });
 
-  describe("valueLeft, valueRight", () => {
-    it("Left", () => {
-      const left = new Left("foo") as Either<string, number>;
-
-      // @ts-expect-error 直接アクセス不可
-      left.valueLeft();
-
-      if (left.isLeft()) {
-        const value = left.valueLeft();
-        assertType<Equal<typeof value, string>>();
-      }
-    });
-
-    it("Right", () => {
-      const right = new Right(42) as Either<string, number>;
-
-      // @ts-expect-error 直接アクセス不可
-      right.valueRight();
-
-      if (right.isRight()) {
-        const value = right.valueRight();
-        assertType<Equal<typeof value, number>>();
-      }
-    });
-  });
-
   describe("findLeft, findRight", () => {
     it("Left", () => {
       const left = new Left("foo") as Either<string, number>;
@@ -75,6 +49,34 @@ describe("Either", () => {
       // それぞれの Option 型に推論される
       assertType<Equal<typeof optionLeft, Option<string>>>();
       assertType<Equal<typeof optionRight, Option<number>>>();
+    });
+  });
+
+  describe("getLeft, getRight", () => {
+    it("Left", () => {
+      const left = new Left("foo") as Either<string, number>;
+
+      const value = left.getLeft();
+      assertType<Equal<typeof value, string>>();
+
+      expect(() => {
+        // 実際にはエラーになるが、number に推論される
+        const error = left.getRight();
+        assertType<Equal<typeof error, number>>();
+      }).toThrow();
+    });
+
+    it("Right", () => {
+      const right = new Right(42) as Either<string, number>;
+
+      expect(() => {
+        // 実際にはエラーになるが、string に推論される
+        const value = right.getLeft();
+        assertType<Equal<typeof value, string>>();
+      }).toThrow();
+
+      const value = right.getRight();
+      assertType<Equal<typeof value, number>>();
     });
   });
 

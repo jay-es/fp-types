@@ -6,6 +6,8 @@ interface IEither {
   isRight(): boolean;
   findLeft(): Option<unknown>;
   findRight(): Option<unknown>;
+  getLeft(): unknown;
+  getRight(): unknown;
   equal(
     other: IEither,
     leftFn?: (l1: unknown, l2: unknown) => boolean,
@@ -35,11 +37,6 @@ export class Left<L> implements IEither {
     this.#value = value;
   }
 
-  // Left のみのメソッド
-  valueLeft(): L {
-    return this.#value;
-  }
-
   isLeft(): this is Left<L> {
     return true;
   }
@@ -56,12 +53,20 @@ export class Left<L> implements IEither {
     return new None();
   }
 
+  getLeft(): L {
+    return this.#value;
+  }
+
+  getRight(): never {
+    throw new Error("Cannot get Right from Left");
+  }
+
   equal(
     other: Left<L> | Right<unknown>,
     leftFn: (l1: L, l2: L) => boolean = equalFn,
     rightFn: (r1: never, r2: never) => boolean = equalFn
   ): boolean {
-    return other.isLeft() && leftFn(this.#value, other.valueLeft());
+    return other.isLeft() && leftFn(this.#value, other.getLeft());
   }
 
   mapLeft<T>(fn: (left: L) => T): Left<T> {
@@ -99,11 +104,6 @@ export class Right<R> implements IEither {
     this.#value = value;
   }
 
-  // Right のみのメソッド
-  valueRight(): R {
-    return this.#value;
-  }
-
   isLeft(): false {
     return false;
   }
@@ -120,12 +120,20 @@ export class Right<R> implements IEither {
     return new Some(this.#value);
   }
 
+  getLeft(): never {
+    throw new Error("Cannot get Left from Right");
+  }
+
+  getRight(): R {
+    return this.#value;
+  }
+
   equal(
     other: Left<unknown> | Right<R>,
     leftFn: (l1: never, l2: never) => boolean = equalFn,
     rightFn: (r1: R, r2: R) => boolean = equalFn
   ): boolean {
-    return other.isRight() && rightFn(this.#value, other.valueRight());
+    return other.isRight() && rightFn(this.#value, other.getRight());
   }
 
   mapLeft<T>(fn: (left: never) => T): Right<R> {
