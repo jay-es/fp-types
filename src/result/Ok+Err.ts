@@ -1,3 +1,4 @@
+import { None, Option, Some } from "../option";
 import { equalFn } from "../utils";
 
 interface IResult {
@@ -17,7 +18,7 @@ interface IResult {
   fold<U>(okFn: (value: unknown) => U, errFn: (error: unknown) => U): U;
   iter(fn: (value: unknown) => void): void;
   iterErr(fn: (value: unknown) => void): void;
-  // TODO: toOption(): Option<unknown>;
+  toOption(): Option<unknown>;
 }
 
 export class Ok<T> implements IResult {
@@ -78,6 +79,10 @@ export class Ok<T> implements IResult {
   iterErr(fn: (value: never) => void): void {
     // no-op
   }
+
+  toOption(): Some<T> {
+    return new Some(this.#value);
+  }
 }
 
 export class Err<E> implements IResult {
@@ -137,5 +142,9 @@ export class Err<E> implements IResult {
 
   iterErr(fn: (value: E) => void): void {
     fn(this.#error);
+  }
+
+  toOption(): None {
+    return new None();
   }
 }

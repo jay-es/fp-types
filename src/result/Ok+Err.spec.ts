@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { None, Some } from "../option";
 import { Err, Ok } from "./Ok+Err";
 
 describe("Ok, Err", () => {
@@ -157,6 +158,22 @@ describe("Ok, Err", () => {
 
       expect(okMock).not.toBeCalled();
       expect(errMock).toBeCalledWith(42);
+    });
+  });
+
+  describe("toOption", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo");
+      const option = ok.toOption();
+
+      expect(option.equal(new Some("foo"))).toBe(true);
+    });
+
+    it("Err", () => {
+      const err = new Err(42);
+      const option = err.toOption();
+
+      expect(option.equal(new None())).toBe(true);
     });
   });
 });

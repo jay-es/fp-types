@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { assertType, Equal } from "~/test/assert";
+import type { Result } from "../result";
 import { Option, None, Some } from "./index";
 
 describe("Option", () => {
@@ -182,6 +183,22 @@ describe("Option", () => {
 
       // 引数の型をテスト
       none.iter((value) => assertType<Equal<typeof value, string>>());
+    });
+  });
+
+  describe("toResult", () => {
+    it("Some", () => {
+      const some = new Some("foo") as Option<string>;
+      const result = some.toResult(42);
+
+      assertType<Equal<typeof result, Result<string, number>>>();
+    });
+
+    it("None", () => {
+      const none = new None() as Option<string>;
+      const result = none.toResult(42);
+
+      assertType<Equal<typeof result, Result<string, number>>>();
     });
   });
 });

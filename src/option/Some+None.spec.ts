@@ -1,4 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
+import { Err, Ok } from "../result";
 import { None, Some } from "./Some+None";
 
 describe("Some, None", () => {
@@ -150,6 +151,22 @@ describe("Some, None", () => {
       none.iter((never) => mock());
 
       expect(mock).not.toBeCalled();
+    });
+  });
+
+  describe("toResult", () => {
+    it("Some", () => {
+      const some = new Some("foo");
+      const result = some.toResult(42);
+
+      expect(result.equal(new Ok("foo"))).toBe(true);
+    });
+
+    it("None", () => {
+      const none = new None();
+      const result = none.toResult(42);
+
+      expect(result.equal(new Err(42))).toBe(true);
     });
   });
 });

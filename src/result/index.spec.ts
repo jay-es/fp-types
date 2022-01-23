@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { assertType, Equal } from "~/test/assert";
 import { Err, Ok, Result } from ".";
+import type { Option } from "../option";
 
 describe("Result", () => {
   describe("isOk, isErr", () => {
@@ -204,6 +205,22 @@ describe("Result", () => {
       // 引数の型をテスト
       err.iter((value) => assertType<Equal<typeof value, string>>());
       err.iterErr((error) => assertType<Equal<typeof error, number>>());
+    });
+  });
+
+  describe("toOption", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo") as Result<string, number>;
+      const option = ok.toOption();
+
+      assertType<Equal<typeof option, Option<string>>>();
+    });
+
+    it("Err", () => {
+      const err = new Err(42) as Result<string, number>;
+      const option = err.toOption();
+
+      assertType<Equal<typeof option, Option<string>>>();
     });
   });
 });
