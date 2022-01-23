@@ -17,18 +17,13 @@ module.exports = {
       { exceptAfterSingleLine: true },
     ],
 
-    // ブロックなどの後、 return 文などの前に空行を入れる
+    // ブロックなどの後に空行を入れる
     "padding-line-between-statements": [
       "error",
       {
         blankLine: "always",
         prev: ["block-like", "multiline-expression"],
         next: "*",
-      },
-      {
-        blankLine: "always",
-        prev: "*",
-        next: ["return", "throw", "break", "continue"],
       },
     ],
 

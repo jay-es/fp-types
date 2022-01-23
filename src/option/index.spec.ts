@@ -75,6 +75,46 @@ describe("Option", () => {
     });
   });
 
+  describe("equal", () => {
+    it("Some", () => {
+      const some1 = new Some("foo") as Option<string>;
+      const some2 = new Some("foo") as Option<string>;
+      const none = new None() as Option<string>;
+
+      // 引数の型をテスト
+      some1.equal(some2, (v1, v2) => {
+        assertType<Equal<typeof v1, string>>();
+        assertType<Equal<typeof v2, string>>();
+        return true;
+      });
+
+      some1.equal(none, (v1, v2) => {
+        assertType<Equal<typeof v1, string>>();
+        assertType<Equal<typeof v2, string>>();
+        return true;
+      });
+    });
+
+    it("None", () => {
+      const none1 = new None() as Option<string>;
+      const none2 = new None() as Option<string>;
+      const some = new Some("foo") as Option<string>;
+
+      // 引数の型をテスト
+      none1.equal(none2, (v1, v2) => {
+        assertType<Equal<typeof v1, string>>();
+        assertType<Equal<typeof v2, string>>();
+        return true;
+      });
+
+      none1.equal(some, (v1, v2) => {
+        assertType<Equal<typeof v1, string>>();
+        assertType<Equal<typeof v2, string>>();
+        return true;
+      });
+    });
+  });
+
   describe("bind", () => {
     it("Some", () => {
       const some = new Some("foo") as Option<string>;

@@ -3,12 +3,15 @@ interface IOption {
   isNone(): boolean;
   get(): unknown;
   value(defaultValue: unknown): unknown;
+  equal(other: IOption, fn?: (v1: unknown, v2: unknown) => boolean): boolean;
   bind<U>(fn: (value: unknown) => Some<U>): IOption;
   map<U>(fn: (value: unknown) => U): IOption;
   fold<U>(none: U, fn: (value: unknown) => U): U;
   iter(fn: (value: unknown) => void): void;
   // TODO: toResult(none: unknown): Result<unknown, unknown>;
 }
+
+const equalFn = <T>(v1: T, v2: T): boolean => v1 === v2;
 
 export class Some<T> implements IOption {
   readonly #value: T;
@@ -31,6 +34,13 @@ export class Some<T> implements IOption {
 
   value(defaultValue: T): T {
     return this.#value;
+  }
+
+  equal(
+    other: Some<T> | None,
+    fn: (v1: T, v2: T) => boolean = equalFn
+  ): boolean {
+    return other.isSome() && fn(this.#value, other.get());
   }
 
   bind<U>(fn: (value: T) => Some<U>): Some<U> {
@@ -65,6 +75,13 @@ export class None implements IOption {
 
   value<T>(defaultValue: T): T {
     return defaultValue;
+  }
+
+  equal<T>(
+    other: Some<T> | None,
+    fn: (v1: never, v2: T) => boolean = equalFn
+  ): boolean {
+    return other.isNone();
   }
 
   bind<U>(fn: (value: never) => Some<U>): None {

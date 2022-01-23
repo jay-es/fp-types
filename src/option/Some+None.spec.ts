@@ -46,19 +46,44 @@ describe("Some, None", () => {
     });
   });
 
+  describe("equal", () => {
+    it("Some", () => {
+      const some1 = new Some("foo");
+      const some2 = new Some("foo");
+      const some3 = new Some("bar");
+      const none = new None();
+
+      const isSameLength = (a: string, b: string) => a.length === b.length;
+
+      expect(some1.equal(some2)).toBe(true);
+      expect(some1.equal(some3)).toBe(false);
+      expect(some1.equal(some3, isSameLength)).toBe(true);
+      expect(some1.equal(none)).toBe(false);
+    });
+
+    it("None", () => {
+      const none1 = new None();
+      const none2 = new None();
+      const some = new Some("foo");
+
+      expect(none1.equal(none2)).toBe(true);
+      expect(none1.equal(some)).toBe(false);
+    });
+  });
+
   describe("bind", () => {
     it("Some", () => {
       const some = new Some("foo");
       const bound = some.bind((value) => new Some(value.endsWith("a")));
 
-      expect(bound).toEqual(new Some(false));
+      expect(bound.equal(new Some(false))).toBe(true);
     });
 
     it("None", () => {
       const none = new None();
       const bound = none.bind((never) => new Some(7));
 
-      expect(bound).toEqual(new None());
+      expect(bound.equal(new None())).toBe(true);
     });
   });
 
@@ -67,14 +92,14 @@ describe("Some, None", () => {
       const some = new Some("foo");
       const mapped = some.map((value) => value.endsWith("a"));
 
-      expect(mapped).toEqual(new Some(false));
+      expect(mapped.equal(new Some(false))).toBe(true);
     });
 
     it("None", () => {
       const none = new None();
       const mapped = none.map((never) => 7);
 
-      expect(mapped).toEqual(new None());
+      expect(mapped.equal(new None())).toBe(true);
     });
   });
 
@@ -83,14 +108,14 @@ describe("Some, None", () => {
       const some = new Some("foo");
       const mapped = some.map((value) => value.endsWith("a"));
 
-      expect(mapped).toEqual(new Some(false));
+      expect(mapped.equal(new Some(false))).toBe(true);
     });
 
     it("None", () => {
       const none = new None();
       const mapped = none.map((never) => 7);
 
-      expect(mapped).toEqual(new None());
+      expect(mapped.equal(new None())).toBe(true);
     });
   });
 
@@ -99,14 +124,14 @@ describe("Some, None", () => {
       const some = new Some("foo");
       const folded = some.fold(true, (value) => value.endsWith("a"));
 
-      expect(folded).toEqual(false);
+      expect(folded).toBe(false);
     });
 
     it("None", () => {
       const none = new None();
       const folded = none.fold(42, (never) => 7);
 
-      expect(folded).toEqual(42);
+      expect(folded).toBe(42);
     });
   });
 
