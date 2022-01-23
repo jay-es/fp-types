@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { Err, Ok } from "./Ok+Err";
 
 describe("Ok, Err", () => {
@@ -45,6 +45,88 @@ describe("Ok, Err", () => {
 
       expect(() => err.getOk()).toThrow();
       expect(err.getErr()).toBe(42);
+    });
+  });
+
+  describe("bind", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo");
+      const bound = ok.bind((value) => new Ok(value.endsWith("a")));
+
+      expect(bound).toEqual(new Ok(false));
+    });
+
+    it("Err", () => {
+      const err = new Err(42);
+      const bound = err.bind((never) => new Ok(false));
+
+      expect(bound).toEqual(new Err(42));
+    });
+  });
+
+  describe("map, mapErr", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo");
+      const mapped = ok.map((value) => value.endsWith("a"));
+      const mappedErr = ok.mapErr((never) => 7);
+
+      expect(mapped).toEqual(new Ok(false));
+      expect(mappedErr).toEqual(ok);
+    });
+
+    it("Err", () => {
+      const err = new Err(42);
+      const mapped = err.map((never) => false);
+      const mappedErr = err.mapErr((error) => error.toFixed());
+
+      expect(mapped).toEqual(err);
+      expect(mappedErr).toEqual(new Err("42"));
+    });
+  });
+
+  describe("fold", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo");
+      const folded = ok.fold(
+        (value) => Symbol(value.substring(0)),
+        (never) => Symbol()
+      );
+
+      expect(folded.description).toBe("foo");
+    });
+
+    it("Err", () => {
+      const err = new Err(42);
+      const folded = err.fold(
+        (never) => Symbol(),
+        (error) => Symbol(error.toFixed())
+      );
+
+      expect(folded.description).toBe("42");
+    });
+  });
+
+  describe("iter, iterErr", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo");
+      const okMock = vi.fn();
+      const errMock = vi.fn();
+      ok.iter((value) => okMock(value));
+      ok.iterErr((never) => errMock());
+
+      expect(okMock).toBeCalledWith("foo");
+      expect(errMock).not.toBeCalled();
+    });
+
+    it("Err", () => {
+      const err = new Err(42);
+      const okMock = vi.fn();
+      const errMock = vi.fn();
+      err.iter((never) => okMock());
+      err.iterErr((error) => errMock(error));
+
+      expect(okMock).not.toBeCalled();
+      expect(errMock).toBeCalledWith(42);
     });
   });
 });

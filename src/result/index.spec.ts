@@ -82,4 +82,86 @@ describe("Result", () => {
       assertType<Equal<typeof error, number>>();
     });
   });
+
+  describe("bind", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo") as Result<string, number>;
+      const bound = ok.bind((value) => new Ok(value.endsWith("a")));
+
+      // Ok の型が変換される
+      assertType<Equal<typeof bound, Result<boolean, number>>>();
+    });
+
+    it("Err", () => {
+      const err = new Err(42) as Result<string, number>;
+      const bound = err.bind((never) => new Ok(false));
+
+      // Ok の型が変換される
+      assertType<Equal<typeof bound, Result<boolean, number>>>();
+    });
+  });
+
+  describe("mapOk, mapErr", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo") as Result<string, number>;
+      const mapped = ok.map((value) => value.endsWith("a"));
+      const mappedErr = ok.mapErr((error) => error.toFixed());
+
+      // 片方が変換された Result 型に推論される
+      assertType<Equal<typeof mapped, Result<boolean, number>>>();
+      assertType<Equal<typeof mappedErr, Result<string, string>>>();
+    });
+
+    it("Err", () => {
+      const err = new Err(42) as Result<string, number>;
+      const mapped = err.map((value) => value.endsWith("a"));
+      const mappedErr = err.mapErr((error) => error.toFixed());
+
+      // 片方が変換された Result 型に推論される
+      assertType<Equal<typeof mapped, Result<boolean, number>>>();
+      assertType<Equal<typeof mappedErr, Result<string, string>>>();
+    });
+  });
+
+  describe("fold", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo") as Result<string, number>;
+      const folded = ok.fold(
+        (value) => Symbol(value.substring(1)),
+        (error) => Symbol(error.toFixed())
+      );
+
+      // 変換された型に推論される
+      assertType<Equal<typeof folded, symbol>>();
+    });
+
+    it("Err", () => {
+      const err = new Err(42) as Result<string, number>;
+      const folded = err.fold(
+        (value) => Symbol(value.substring(1)),
+        (error) => Symbol(error.toFixed())
+      );
+
+      // 変換された型に推論される
+      assertType<Equal<typeof folded, symbol>>();
+    });
+  });
+
+  describe("iter, iterErr", () => {
+    it("Ok", () => {
+      const ok = new Ok("foo") as Result<string, number>;
+
+      // 引数の型をテスト
+      ok.iter((value) => assertType<Equal<typeof value, string>>());
+      ok.iterErr((error) => assertType<Equal<typeof error, number>>());
+    });
+
+    it("Err", () => {
+      const err = new Err(42) as Result<string, number>;
+
+      // 引数の型をテスト
+      err.iter((value) => assertType<Equal<typeof value, string>>());
+      err.iterErr((error) => assertType<Equal<typeof error, number>>());
+    });
+  });
 });
