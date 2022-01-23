@@ -8,9 +8,18 @@ interface IEither {
   mapLeft<T>(fn: (left: unknown) => T): IEither;
   mapRight<U>(fn: (right: unknown) => U): IEither;
   map<T, U>(
-    fnLeft: (left: unknown) => T,
-    fnRight: (right: unknown) => U
+    leftFn: (left: unknown) => T,
+    rightFn: (right: unknown) => U
   ): IEither;
+  fold<T>(leftFn: (left: unknown) => T, rightFn: (right: unknown) => T): T;
+  iter(
+    leftFn: (left: unknown) => void,
+    rightFn: (right: unknown) => void
+  ): void;
+  forAll(
+    leftFn: (left: unknown) => boolean,
+    rightFn: (right: unknown) => boolean
+  ): boolean;
 }
 
 export class Left<L> implements IEither {
@@ -52,6 +61,21 @@ export class Left<L> implements IEither {
   map<T, U>(leftFn: (left: L) => T, rightFn: (right: never) => U): Left<T> {
     return this.mapLeft(leftFn);
   }
+
+  fold<T>(leftFn: (left: L) => T, rightFn: (right: never) => T): T {
+    return leftFn(this.#value);
+  }
+
+  iter(leftFn: (left: L) => void, rightFn: (right: never) => void): void {
+    leftFn(this.#value);
+  }
+
+  forAll(
+    leftFn: (left: L) => boolean,
+    rightFn: (right: never) => boolean
+  ): boolean {
+    return leftFn(this.#value);
+  }
 }
 
 export class Right<R> implements IEither {
@@ -92,5 +116,20 @@ export class Right<R> implements IEither {
 
   map<T, U>(leftFn: (left: never) => T, rightFn: (right: R) => U): Right<U> {
     return this.mapRight(rightFn);
+  }
+
+  fold<U>(leftFn: (left: never) => U, rightFn: (right: R) => U): U {
+    return rightFn(this.#value);
+  }
+
+  iter(leftFn: (left: never) => void, rightFn: (right: R) => void): void {
+    rightFn(this.#value);
+  }
+
+  forAll(
+    leftFn: (left: never) => boolean,
+    rightFn: (right: R) => boolean
+  ): boolean {
+    return rightFn(this.#value);
   }
 }

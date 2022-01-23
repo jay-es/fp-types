@@ -81,8 +81,8 @@ describe("Either", () => {
   describe("mapLeft, mapRight", () => {
     it("Left", () => {
       const left = new Left("foo") as Either<string, number>;
-      const optionLeft = left.mapLeft((v) => v.endsWith("a"));
-      const optionRight = left.mapRight((v) => v.toFixed());
+      const optionLeft = left.mapLeft((value) => value.endsWith("a"));
+      const optionRight = left.mapRight((value) => value.toFixed());
 
       // 片方が変換された Either 型に推論される
       assertType<Equal<typeof optionLeft, Either<boolean, number>>>();
@@ -91,8 +91,8 @@ describe("Either", () => {
 
     it("Right", () => {
       const right = new Right(42) as Either<string, number>;
-      const optionLeft = right.mapLeft((v) => v.endsWith("a"));
-      const optionRight = right.mapRight((v) => v.toFixed());
+      const optionLeft = right.mapLeft((value) => value.endsWith("a"));
+      const optionRight = right.mapRight((value) => value.toFixed());
 
       // 片方が変換された Either 型に推論される
       assertType<Equal<typeof optionLeft, Either<boolean, number>>>();
@@ -104,8 +104,8 @@ describe("Either", () => {
     it("Left", () => {
       const left = new Left("foo") as Either<string, number>;
       const mapped = left.map(
-        (v) => v.endsWith("a"),
-        (v) => v.toFixed()
+        (value) => value.endsWith("a"),
+        (value) => value.toFixed()
       );
 
       // 両方とも変換された Either 型に推論される
@@ -115,12 +115,82 @@ describe("Either", () => {
     it("Right", () => {
       const right = new Right(42) as Either<string, number>;
       const mapped = right.map(
-        (v) => v.endsWith("a"),
-        (v) => v.toFixed()
+        (value) => value.endsWith("a"),
+        (value) => value.toFixed()
       );
 
       // 両方とも変換された Either 型に推論される
       assertType<Equal<typeof mapped, Either<boolean, string>>>();
+    });
+  });
+
+  describe("fold", () => {
+    it("Left", () => {
+      const left = new Left("foo") as Either<string, number>;
+      const folded = left.fold(
+        (value) => Symbol(value.substring(0)),
+        (value) => Symbol(value.toFixed())
+      );
+
+      // 変換された型に推論される
+      assertType<Equal<typeof folded, symbol>>();
+    });
+
+    it("Right", () => {
+      const right = new Right(42) as Either<string, number>;
+      const folded = right.fold(
+        (value) => Symbol(value.substring(0)),
+        (value) => Symbol(value.toFixed())
+      );
+
+      // 変換された型に推論される
+      assertType<Equal<typeof folded, symbol>>();
+    });
+  });
+
+  describe("iter", () => {
+    it("Left", () => {
+      const left = new Left("foo") as Either<string, number>;
+
+      // 引数の型をテスト
+      left.iter(
+        (value) => assertType<Equal<typeof value, string>>(),
+        (value) => assertType<Equal<typeof value, number>>()
+      );
+    });
+
+    it("Right", () => {
+      const right = new Right(42) as Either<string, number>;
+
+      // 引数の型をテスト
+      right.iter(
+        (value) => assertType<Equal<typeof value, string>>(),
+        (value) => assertType<Equal<typeof value, number>>()
+      );
+    });
+  });
+
+  describe("forAll", () => {
+    it("Left", () => {
+      const left = new Left("foo") as Either<string, number>;
+      const result = left.forAll(
+        (value) => value.endsWith("a"),
+        (value) => value.toFixed() === "bar"
+      );
+
+      // boolean に推論される
+      assertType<Equal<typeof result, boolean>>();
+    });
+
+    it("Right", () => {
+      const right = new Right(42) as Either<string, number>;
+      const result = right.forAll(
+        (value) => value.endsWith("a"),
+        (value) => value.toFixed() === "bar"
+      );
+
+      // boolean に推論される
+      assertType<Equal<typeof result, boolean>>();
     });
   });
 });
