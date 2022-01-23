@@ -83,6 +83,48 @@ describe("Result", () => {
     });
   });
 
+  describe("equal", () => {
+    it("Ok", () => {
+      const ok1 = new Ok("foo") as Result<string, number>;
+      const ok2 = new Ok("foo") as Result<string, number>;
+
+      // 引数の型をテスト
+      ok1.equal(
+        ok2,
+        (v1, v2) => {
+          assertType<Equal<typeof v1, string>>();
+          assertType<Equal<typeof v2, string>>();
+          return true;
+        },
+        (e1, e2) => {
+          assertType<Equal<typeof e1, number>>();
+          assertType<Equal<typeof e2, number>>();
+          return true;
+        }
+      );
+    });
+
+    it("Err", () => {
+      const err1 = new Err(42) as Result<string, number>;
+      const err2 = new Err(42) as Result<string, number>;
+
+      // 引数の型をテスト
+      err1.equal(
+        err2,
+        (v1, v2) => {
+          assertType<Equal<typeof v1, string>>();
+          assertType<Equal<typeof v2, string>>();
+          return true;
+        },
+        (e1, e2) => {
+          assertType<Equal<typeof e1, number>>();
+          assertType<Equal<typeof e2, number>>();
+          return true;
+        }
+      );
+    });
+  });
+
   describe("bind", () => {
     it("Ok", () => {
       const ok = new Ok("foo") as Result<string, number>;

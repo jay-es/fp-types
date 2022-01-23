@@ -48,19 +48,49 @@ describe("Ok, Err", () => {
     });
   });
 
+  describe("equal", () => {
+    it("Ok", () => {
+      const ok1 = new Ok("foo");
+      const ok2 = new Ok("foo");
+      const ok3 = new Ok("bar");
+      const err = new Err("foo");
+
+      const isSameLength = (a: string, b: string) => a.length === b.length;
+
+      expect(ok1.equal(ok2)).toBe(true);
+      expect(ok1.equal(ok3)).toBe(false);
+      expect(ok1.equal(ok3, isSameLength)).toBe(true);
+      expect(ok1.equal(err)).toBe(false);
+    });
+
+    it("Err", () => {
+      const err1 = new Err(42);
+      const err2 = new Err(42);
+      const err3 = new Err(7);
+      const ok = new Ok(42);
+
+      const isDivisor = (a: number, b: number) => a % b === 0;
+
+      expect(err1.equal(err2)).toBe(true);
+      expect(err1.equal(err3)).toBe(false);
+      expect(err1.equal(err3, undefined, isDivisor)).toBe(true);
+      expect(err1.equal(ok)).toBe(false);
+    });
+  });
+
   describe("bind", () => {
     it("Ok", () => {
       const ok = new Ok("foo");
       const bound = ok.bind((value) => new Ok(value.endsWith("a")));
 
-      expect(bound).toEqual(new Ok(false));
+      expect(bound.equal(new Ok(false))).toBe(true);
     });
 
     it("Err", () => {
       const err = new Err(42);
       const bound = err.bind((never) => new Ok(false));
 
-      expect(bound).toEqual(new Err(42));
+      expect(bound.equal(new Err(42))).toBe(true);
     });
   });
 
@@ -70,8 +100,8 @@ describe("Ok, Err", () => {
       const mapped = ok.map((value) => value.endsWith("a"));
       const mappedErr = ok.mapErr((never) => 7);
 
-      expect(mapped).toEqual(new Ok(false));
-      expect(mappedErr).toEqual(ok);
+      expect(mapped.equal(new Ok(false))).toBe(true);
+      expect(mappedErr.equal(ok)).toBe(true);
     });
 
     it("Err", () => {
@@ -79,8 +109,8 @@ describe("Ok, Err", () => {
       const mapped = err.map((never) => false);
       const mappedErr = err.mapErr((error) => error.toFixed(1));
 
-      expect(mapped).toEqual(err);
-      expect(mappedErr).toEqual(new Err("42.0"));
+      expect(mapped.equal(err)).toBe(true);
+      expect(mappedErr.equal(new Err("42.0"))).toBe(true);
     });
   });
 

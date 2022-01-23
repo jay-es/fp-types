@@ -1,9 +1,16 @@
+import { equalFn } from "../utils";
+
 interface IResult {
   isOk(): boolean;
   isErr(): boolean;
   value(defaultValue: unknown): unknown;
   getOk(): unknown;
   getErr(): unknown;
+  equal(
+    other: IResult,
+    okFn: (v1: unknown, v2: unknown) => boolean,
+    errFn: (e1: unknown, e2: unknown) => boolean
+  ): boolean;
   bind(fn: (value: unknown) => unknown): IResult;
   map(fn: (value: unknown) => unknown): IResult;
   mapErr(fn: (value: unknown) => unknown): IResult;
@@ -38,6 +45,14 @@ export class Ok<T> implements IResult {
 
   getErr(): never {
     throw new Error("Cannot get Err from Ok");
+  }
+
+  equal(
+    other: Ok<T> | Err<unknown>,
+    okFn: (v1: T, v2: T) => boolean = equalFn,
+    errFn: (e1: never, e2: never) => boolean = equalFn
+  ): boolean {
+    return other.isOk() && okFn(this.#value, other.getOk());
   }
 
   bind<U>(fn: (value: T) => Ok<U>): Ok<U> {
@@ -90,6 +105,14 @@ export class Err<E> implements IResult {
 
   getErr(): E {
     return this.#error;
+  }
+
+  equal(
+    other: Ok<unknown> | Err<E>,
+    okFn: (v1: never, v2: never) => boolean = equalFn,
+    errFn: (e1: E, e2: E) => boolean = equalFn
+  ): boolean {
+    return other.isErr() && errFn(this.#error, other.getErr());
   }
 
   bind<U>(fn: (value: never) => Ok<U>): Err<E> {
