@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { Option } from "./Option";
 import { Result } from "./Result";
 
-describe("Ok, Err", () => {
+describe("Result", () => {
   describe("isOk, isErr", () => {
     it("Ok", () => {
       const ok = Result.ok("foo");

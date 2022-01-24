@@ -30,12 +30,10 @@ console.log(Option.isSome(optionValue)); // true or false
 const fn = (): Option<string> => {
   const result = doSomething();
 
-  if (!result) return new None();
-
-  return new Some(result);
+  return result ? Option.some(result) : Option.none();
 };
 
-const optionValue = fn();
+const value = fn();
 
-console.log(optionValue.isSome()); // true or false
+console.log(value.isSome()); // true or false
 ```
