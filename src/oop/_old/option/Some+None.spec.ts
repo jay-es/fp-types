@@ -104,22 +104,6 @@ describe("Some, None", () => {
     });
   });
 
-  describe("map", () => {
-    it("Some", () => {
-      const some = new Some("foo");
-      const mapped = some.map((value) => value.endsWith("a"));
-
-      expect(mapped.equal(new Some(false))).toBe(true);
-    });
-
-    it("None", () => {
-      const none = new None();
-      const mapped = none.map((never) => 7);
-
-      expect(mapped.equal(new None())).toBe(true);
-    });
-  });
-
   describe("fold", () => {
     it("Some", () => {
       const some = new Some("foo");
