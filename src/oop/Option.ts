@@ -1,4 +1,5 @@
 import { equalFn } from "~/src/shared/utils";
+import { Result } from "./Result";
 
 const vvv = Symbol();
 
@@ -86,5 +87,13 @@ export class Option<T> {
     if (this.isSome()) {
       fn(this[vvv]);
     }
+  }
+
+  toResult<E>(none: E): Result<T, E> {
+    if (this.isSome()) {
+      return Result.ok(this[vvv]);
+    }
+
+    return Result.err(none);
   }
 }

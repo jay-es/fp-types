@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { Option } from "./Option";
+import { Result } from "./Result";
 
 describe("Option", () => {
   describe("isSome, isNone", () => {
@@ -137,19 +138,19 @@ describe("Option", () => {
     });
   });
 
-  // describe("toResult", () => {
-  //   it("Some", () => {
-  //     const some = Option.some("foo");
-  //     const result = some.toResult(42);
+  describe("toResult", () => {
+    it("Some", () => {
+      const some = Option.some("foo");
+      const result = some.toResult(42);
 
-  //     expect(result.equal(new Ok("foo"))).toBe(true);
-  //   });
+      expect(result.equal(Result.ok("foo"))).toBe(true);
+    });
 
-  //   it("None", () => {
-  //     const none = Option.none();
-  //     const result = none.toResult(42);
+    it("None", () => {
+      const none = Option.none();
+      const result = none.toResult(42);
 
-  //     expect(result.equal(new Err(42))).toBe(true);
-  //   });
-  // });
+      expect(result.equal(Result.err(42))).toBe(true);
+    });
+  });
 });
