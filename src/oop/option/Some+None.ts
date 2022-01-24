@@ -1,5 +1,5 @@
 import { Err, Ok, Result } from "../result";
-import { equalFn } from "../utils";
+import { equalFn } from "~/src/shared/utils";
 
 interface IOption {
   isSome(): boolean;
