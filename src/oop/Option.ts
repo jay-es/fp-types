@@ -1,4 +1,4 @@
-import { equalFn, makeNever } from "~/src/shared/utils";
+import { equalFn, makeNever } from "~/src/shared/helpers";
 import { Result } from "./Result";
 
 const vvv = Symbol();
