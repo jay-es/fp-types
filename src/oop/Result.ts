@@ -31,12 +31,18 @@ export class Result<T, E> {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static ok<T, E = any>(value: T): Result<T, E> {
-    return new this({ type: "Ok", value });
+    return new Result({ type: "Ok", value });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static err<E, T = any>(error: E): Result<T, E> {
-    return new this({ type: "Err", error });
+    return new Result({ type: "Err", error });
+  }
+
+  private match<U, F>(okFn: (value: T) => U, errFn: (error: E) => F): U | F {
+    if (this.isOk()) return okFn(this[vvv]);
+    if (this.isErr()) return errFn(this[eee]);
+    return makeNever(this.#type);
   }
 
   isOk(): this is Ok<T> {
@@ -84,74 +90,36 @@ export class Result<T, E> {
   }
 
   bind<U>(okFn: (value: T) => Result<U, E>): Result<U, E> {
-    if (this.isOk()) {
-      return okFn(this[vvv]);
-    }
-
-    if (this.isErr()) {
-      return Result.err(this[eee]);
-    }
-
-    return makeNever(this.#type);
+    return this.match(okFn, Result.err);
   }
 
   map<U>(okFn: (value: T) => U): Result<U, E> {
-    if (this.isOk()) {
-      return Result.ok(okFn(this[vvv]));
-    }
-
-    if (this.isErr()) {
-      return Result.err(this[eee]);
-    }
-
-    return makeNever(this.#type);
+    return this.match(
+      (value) => Result.ok(okFn(value)),
+      (error) => Result.err(error)
+    );
   }
 
   mapErr<F>(errFn: (error: E) => F): Result<T, F> {
-    if (this.isOk()) {
-      return Result.ok(this[vvv]);
-    }
-
-    if (this.isErr()) {
-      return Result.err(errFn(this[eee]));
-    }
-
-    return makeNever(this.#type);
+    return this.match(
+      (value) => Result.ok(value),
+      (error) => Result.err(errFn(error))
+    );
   }
 
   fold<U>(okFn: (value: T) => U, errFn: (error: E) => U): U {
-    if (this.isOk()) {
-      return okFn(this[vvv]);
-    }
-
-    if (this.isErr()) {
-      return errFn(this[eee]);
-    }
-
-    return makeNever(this.#type);
+    return this.match(okFn, errFn);
   }
 
   iter(okFn: (value: T) => void): void {
-    if (this.isOk()) {
-      return okFn(this[vvv]);
-    }
+    this.match(okFn, () => undefined);
   }
 
   iterErr(errFn: (value: E) => void): void {
-    if (this.isErr()) {
-      return errFn(this[eee]);
-    }
+    this.match(() => undefined, errFn);
   }
 
   toOption(): Option<T> {
-    if (this.isOk()) {
-      return Option.some(this[vvv]);
-    }
-
-    if (this.isErr()) {
-      return Option.none();
-    }
-
-    return makeNever(this.#type);
+    return this.match(Option.some, Option.none);
   }
 }

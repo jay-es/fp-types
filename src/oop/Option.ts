@@ -1,4 +1,4 @@
-import { equalFn } from "~/src/shared/utils";
+import { equalFn, makeNever } from "~/src/shared/utils";
 import { Result } from "./Result";
 
 const vvv = Symbol();
@@ -23,12 +23,18 @@ export class Option<T> {
   }
 
   static some<T>(value: T): Option<T> {
-    return new this("Some", value);
+    return new Option("Some", value);
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static none<T = any>(): Option<T> {
-    return new this("None");
+    return new Option("None");
+  }
+
+  private match<U, N>(someFn: (value: T) => U, none: N): U | N {
+    if (this.isSome()) return someFn(this[vvv]);
+    if (this.isNone()) return none;
+    return makeNever(this.#type);
   }
 
   isSome(): this is Some<T> {
@@ -60,27 +66,18 @@ export class Option<T> {
   }
 
   bind<U>(fn: (value: T) => Option<U>): Option<U> {
-    if (this.isSome()) {
-      return fn(this[vvv]);
-    }
-
-    return Option.none<U>();
+    return this.match(fn, Option.none<U>());
   }
 
   map<U>(fn: (value: T) => U): Option<U> {
-    if (this.isSome()) {
-      return Option.some(fn(this[vvv]));
-    }
-
-    return Option.none<U>();
+    return this.match(
+      (value) => Option.some(fn(value)), // line-break
+      Option.none<U>()
+    );
   }
 
   fold<U>(none: U, fn: (value: T) => U): U {
-    if (this.isSome()) {
-      return fn(this[vvv]);
-    }
-
-    return none;
+    return this.match(fn, none);
   }
 
   iter(fn: (value: T) => void): void {
@@ -90,10 +87,6 @@ export class Option<T> {
   }
 
   toResult<E>(none: E): Result<T, E> {
-    if (this.isSome()) {
-      return Result.ok(this[vvv]);
-    }
-
-    return Result.err(none);
+    return this.match(Result.ok, Result.err(none));
   }
 }

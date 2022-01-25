@@ -31,12 +31,21 @@ export class Either<L, R> {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static left<L, R = any>(left: L): Either<L, R> {
-    return new this({ type: "Left", left });
+    return new Either({ type: "Left", left });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static right<R, L = any>(right: R): Either<L, R> {
-    return new this({ type: "Right", right });
+    return new Either({ type: "Right", right });
+  }
+
+  private match<L2, R2>(
+    leftFn: (left: L) => L2,
+    rightFn: (right: R) => R2
+  ): L2 | R2 {
+    if (this.isLeft()) return leftFn(this[lll]);
+    if (this.isRight()) return rightFn(this[rrr]);
+    return makeNever(this.#type);
   }
 
   isLeft(): this is Left<L> {
@@ -48,11 +57,11 @@ export class Either<L, R> {
   }
 
   findLeft(): Option<L> {
-    return this.isLeft() ? Option.some(this[lll]) : Option.none();
+    return this.match(Option.some, Option.none);
   }
 
   findRight(): Option<R> {
-    return this.isRight() ? Option.some(this[rrr]) : Option.none();
+    return this.match(Option.none, Option.some);
   }
 
   getLeft(): L {
@@ -88,78 +97,41 @@ export class Either<L, R> {
   }
 
   mapLeft<L2>(leftFn: (left: L) => L2): Either<L2, R> {
-    if (this.isLeft()) {
-      return Either.left(leftFn(this[lll]));
-    }
-
-    if (this.isRight()) {
-      return Either.right(this[rrr]);
-    }
-
-    return makeNever(this.#type);
+    return this.match(
+      (left) => Either.left(leftFn(left)),
+      (right) => Either.right(right)
+    );
   }
 
   mapRight<R2>(rightFn: (right: R) => R2): Either<L, R2> {
-    if (this.isLeft()) {
-      return Either.left(this[lll]);
-    }
-
-    if (this.isRight()) {
-      return Either.right(rightFn(this[rrr]));
-    }
-
-    return makeNever(this.#type);
+    return this.match(
+      (left) => Either.left(left),
+      (right) => Either.right(rightFn(right))
+    );
   }
 
   map<L2, R2>(
     leftFn: (left: L) => L2,
     rightFn: (right: R) => R2
   ): Either<L2, R2> {
-    if (this.isLeft()) {
-      return Either.left(leftFn(this[lll]));
-    }
-
-    if (this.isRight()) {
-      return Either.right(rightFn(this[rrr]));
-    }
-
-    return makeNever(this.#type);
+    return this.match(
+      (left) => Either.left(leftFn(left)),
+      (right) => Either.right(rightFn(right))
+    );
   }
 
   fold<T>(leftFn: (left: L) => T, rightFn: (right: R) => T): T {
-    if (this.isLeft()) {
-      return leftFn(this[lll]);
-    }
-
-    if (this.isRight()) {
-      return rightFn(this[rrr]);
-    }
-
-    return makeNever(this.#type);
+    return this.match(leftFn, rightFn);
   }
 
   iter(leftFn: (left: L) => void, rightFn: (right: R) => void): void {
-    if (this.isLeft()) {
-      leftFn(this[lll]);
-    }
-
-    if (this.isRight()) {
-      rightFn(this[rrr]);
-    }
+    this.match(leftFn, rightFn);
   }
 
   forAll(
     leftFn: (left: L) => boolean,
     rightFn: (right: R) => boolean
   ): boolean {
-    if (this.isLeft()) {
-      return leftFn(this[lll]);
-    }
-
-    if (this.isRight()) {
-      return rightFn(this[rrr]);
-    }
-
-    return makeNever(this.#type);
+    return this.match(leftFn, rightFn);
   }
 }
