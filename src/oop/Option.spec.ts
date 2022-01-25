@@ -1,18 +1,18 @@
 import { describe, expect, it, vi } from "vitest";
-import { Err, Ok } from "../result";
-import { None, Some } from "./Some+None";
+import { Option } from "./Option";
+import { Result } from "./Result";
 
-describe("Some, None", () => {
+describe("Option", () => {
   describe("isSome, isNone", () => {
     it("Some", () => {
-      const some = new Some("foo");
+      const some = Option.some("foo");
 
       expect(some.isSome()).toBe(true);
       expect(some.isNone()).toBe(false);
     });
 
     it("None", () => {
-      const none = new None();
+      const none = Option.none();
 
       expect(none.isSome()).toBe(false);
       expect(none.isNone()).toBe(true);
@@ -21,13 +21,13 @@ describe("Some, None", () => {
 
   describe("value", () => {
     it("Some", () => {
-      const some = new Some("foo");
+      const some = Option.some("foo");
 
       expect(some.value("bar")).toBe("foo");
     });
 
     it("None", () => {
-      const none = new None();
+      const none = Option.none();
 
       expect(none.value("bar")).toBe("bar");
     });
@@ -35,13 +35,13 @@ describe("Some, None", () => {
 
   describe("get", () => {
     it("Some", () => {
-      const some = new Some("foo");
+      const some = Option.some("foo");
 
       expect(some.get()).toBe("foo");
     });
 
     it("None", () => {
-      const none = new None();
+      const none = Option.none();
 
       expect(() => none.get()).toThrow();
     });
@@ -49,10 +49,10 @@ describe("Some, None", () => {
 
   describe("equal", () => {
     it("Some", () => {
-      const some1 = new Some("foo");
-      const some2 = new Some("foo");
-      const some3 = new Some("bar");
-      const none = new None();
+      const some1 = Option.some("foo");
+      const some2 = Option.some("foo");
+      const some3 = Option.some("bar");
+      const none = Option.none();
 
       const isSameLength = (a: string, b: string) => a.length === b.length;
 
@@ -63,9 +63,9 @@ describe("Some, None", () => {
     });
 
     it("None", () => {
-      const none1 = new None();
-      const none2 = new None();
-      const some = new Some("foo");
+      const none1 = Option.none();
+      const none2 = Option.none();
+      const some = Option.some("foo");
 
       expect(none1.equal(none2)).toBe(true);
       expect(none1.equal(some)).toBe(false);
@@ -74,63 +74,47 @@ describe("Some, None", () => {
 
   describe("bind", () => {
     it("Some", () => {
-      const some = new Some("foo");
-      const bound = some.bind((value) => new Some(value.endsWith("a")));
+      const some = Option.some("foo");
+      const bound = some.bind((value) => Option.some(value.endsWith("a")));
 
-      expect(bound.equal(new Some(false))).toBe(true);
+      expect(bound.equal(Option.some(false))).toBe(true);
     });
 
     it("None", () => {
-      const none = new None();
-      const bound = none.bind((never) => new Some(7));
+      const none = Option.none();
+      const bound = none.bind((value) => Option.some(7));
 
-      expect(bound.equal(new None())).toBe(true);
+      expect(bound.equal(Option.none())).toBe(true);
     });
   });
 
   describe("map", () => {
     it("Some", () => {
-      const some = new Some("foo");
+      const some = Option.some("foo");
       const mapped = some.map((value) => value.endsWith("a"));
 
-      expect(mapped.equal(new Some(false))).toBe(true);
+      expect(mapped.equal(Option.some(false))).toBe(true);
     });
 
     it("None", () => {
-      const none = new None();
-      const mapped = none.map((never) => 7);
+      const none = Option.none();
+      const mapped = none.map((value) => 7);
 
-      expect(mapped.equal(new None())).toBe(true);
-    });
-  });
-
-  describe("map", () => {
-    it("Some", () => {
-      const some = new Some("foo");
-      const mapped = some.map((value) => value.endsWith("a"));
-
-      expect(mapped.equal(new Some(false))).toBe(true);
-    });
-
-    it("None", () => {
-      const none = new None();
-      const mapped = none.map((never) => 7);
-
-      expect(mapped.equal(new None())).toBe(true);
+      expect(mapped.equal(Option.none())).toBe(true);
     });
   });
 
   describe("fold", () => {
     it("Some", () => {
-      const some = new Some("foo");
+      const some = Option.some("foo");
       const folded = some.fold(true, (value) => value.endsWith("a"));
 
       expect(folded).toBe(false);
     });
 
     it("None", () => {
-      const none = new None();
-      const folded = none.fold(42, (never) => 7);
+      const none = Option.none();
+      const folded = none.fold(42, (value) => 7);
 
       expect(folded).toBe(42);
     });
@@ -138,7 +122,7 @@ describe("Some, None", () => {
 
   describe("iter", () => {
     it("Some", () => {
-      const some = new Some("foo");
+      const some = Option.some("foo");
       const mock = vi.fn();
       some.iter((value) => mock(value));
 
@@ -146,9 +130,9 @@ describe("Some, None", () => {
     });
 
     it("None", () => {
-      const none = new None();
+      const none = Option.none();
       const mock = vi.fn();
-      none.iter((never) => mock());
+      none.iter((value) => mock());
 
       expect(mock).not.toBeCalled();
     });
@@ -156,17 +140,17 @@ describe("Some, None", () => {
 
   describe("toResult", () => {
     it("Some", () => {
-      const some = new Some("foo");
+      const some = Option.some("foo");
       const result = some.toResult(42);
 
-      expect(result.equal(new Ok("foo"))).toBe(true);
+      expect(result.equal(Result.ok("foo"))).toBe(true);
     });
 
     it("None", () => {
-      const none = new None();
+      const none = Option.none();
       const result = none.toResult(42);
 
-      expect(result.equal(new Err(42))).toBe(true);
+      expect(result.equal(Result.err(42))).toBe(true);
     });
   });
 });

@@ -1,4 +1,3 @@
-export * from "./either";
-export * from "./option";
-export * from "./result";
- 
+export { Either } from "./Either";
+export { Option } from "./Option";
+export { Result } from "./Result";
