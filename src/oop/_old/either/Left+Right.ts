@@ -11,22 +11,22 @@ interface IEither {
   equal(
     other: IEither,
     leftFn?: (l1: unknown, l2: unknown) => boolean,
-    rightFn?: (r1: unknown, r2: unknown) => boolean
+    rightFn?: (r1: unknown, r2: unknown) => boolean,
   ): boolean;
   mapLeft<T>(fn: (left: unknown) => T): IEither;
   mapRight<U>(fn: (right: unknown) => U): IEither;
   map<T, U>(
     leftFn: (left: unknown) => T,
-    rightFn: (right: unknown) => U
+    rightFn: (right: unknown) => U,
   ): IEither;
   fold<T>(leftFn: (left: unknown) => T, rightFn: (right: unknown) => T): T;
   iter(
     leftFn: (left: unknown) => void,
-    rightFn: (right: unknown) => void
+    rightFn: (right: unknown) => void,
   ): void;
   forAll(
     leftFn: (left: unknown) => boolean,
-    rightFn: (right: unknown) => boolean
+    rightFn: (right: unknown) => boolean,
   ): boolean;
 }
 
@@ -64,7 +64,7 @@ export class Left<L> implements IEither {
   equal(
     other: Left<L> | Right<unknown>,
     leftFn: (l1: L, l2: L) => boolean = equalFn,
-    rightFn: (r1: never, r2: never) => boolean = equalFn
+    rightFn: (r1: never, r2: never) => boolean = equalFn,
   ): boolean {
     return other.isLeft() && leftFn(this.#value, other.getLeft());
   }
@@ -91,7 +91,7 @@ export class Left<L> implements IEither {
 
   forAll(
     leftFn: (left: L) => boolean,
-    rightFn: (right: never) => boolean
+    rightFn: (right: never) => boolean,
   ): boolean {
     return leftFn(this.#value);
   }
@@ -131,7 +131,7 @@ export class Right<R> implements IEither {
   equal(
     other: Left<unknown> | Right<R>,
     leftFn: (l1: never, l2: never) => boolean = equalFn,
-    rightFn: (r1: R, r2: R) => boolean = equalFn
+    rightFn: (r1: R, r2: R) => boolean = equalFn,
   ): boolean {
     return other.isRight() && rightFn(this.#value, other.getRight());
   }
@@ -158,7 +158,7 @@ export class Right<R> implements IEither {
 
   forAll(
     leftFn: (left: never) => boolean,
-    rightFn: (right: R) => boolean
+    rightFn: (right: R) => boolean,
   ): boolean {
     return rightFn(this.#value);
   }

@@ -22,7 +22,7 @@ export class Result<T, E> {
   readonly [eee]?: E;
 
   private constructor(
-    param: { type: "Ok"; value: T } | { type: "Err"; error: E }
+    param: { type: "Ok"; value: T } | { type: "Err"; error: E },
   ) {
     this.#type = param.type;
     if (param.type === "Ok") this[vvv] = param.value;
@@ -76,7 +76,7 @@ export class Result<T, E> {
   equal(
     other: Result<T, E>,
     okFn: (v1: T, v2: T) => boolean = equalFn,
-    errFn: (e1: E, e2: E) => boolean = equalFn
+    errFn: (e1: E, e2: E) => boolean = equalFn,
   ): boolean {
     if (this.isOk() && other.isOk()) {
       return okFn(this[vvv], other[vvv]);
@@ -96,14 +96,14 @@ export class Result<T, E> {
   map<U>(okFn: (value: T) => U): Result<U, E> {
     return this.match(
       (value) => Result.ok(okFn(value)),
-      (error) => Result.err(error)
+      (error) => Result.err(error),
     );
   }
 
   mapErr<F>(errFn: (error: E) => F): Result<T, F> {
     return this.match(
       (value) => Result.ok(value),
-      (error) => Result.err(errFn(error))
+      (error) => Result.err(errFn(error)),
     );
   }
 

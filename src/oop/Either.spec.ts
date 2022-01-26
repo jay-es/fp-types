@@ -106,7 +106,7 @@ describe("Either", () => {
       const left = Either.left("foo");
       const mapped = left.map(
         (left) => left.endsWith("a"),
-        (right) => 7
+        (right) => 7,
       );
 
       expect(mapped.equal(Either.left(false))).toBe(true);
@@ -116,7 +116,7 @@ describe("Either", () => {
       const right = Either.right(42);
       const mapped = right.map(
         (left) => false,
-        (right) => right.toFixed(1)
+        (right) => right.toFixed(1),
       );
 
       expect(mapped.equal(Either.right("42.0"))).toBe(true);
@@ -128,7 +128,7 @@ describe("Either", () => {
       const left = Either.left("foo");
       const folded = left.fold(
         (left) => Symbol(left.substring(1)),
-        (right) => Symbol()
+        (right) => Symbol(),
       );
 
       expect(folded.description).toBe("oo");
@@ -138,7 +138,7 @@ describe("Either", () => {
       const right = Either.right(42);
       const folded = right.fold(
         (left) => Symbol(),
-        (right) => Symbol(right.toFixed(1))
+        (right) => Symbol(right.toFixed(1)),
       );
 
       expect(folded.description).toBe("42.0");
@@ -152,7 +152,7 @@ describe("Either", () => {
       const rightMock = vi.fn();
       left.iter(
         (left) => leftMock(left),
-        (right) => rightMock()
+        (right) => rightMock(),
       );
 
       expect(leftMock).toBeCalledWith("foo");
@@ -165,7 +165,7 @@ describe("Either", () => {
       const rightMock = vi.fn();
       right.iter(
         (left) => leftMock(),
-        (right) => rightMock(right)
+        (right) => rightMock(right),
       );
 
       expect(leftMock).not.toBeCalled();
@@ -178,7 +178,7 @@ describe("Either", () => {
       const left = Either.left("foo");
       const result = left.forAll(
         (left) => left.endsWith("a"),
-        (right) => true
+        (right) => true,
       );
 
       expect(result).toBe(false);
@@ -188,7 +188,7 @@ describe("Either", () => {
       const right = Either.right(42);
       const result = right.forAll(
         (left) => true,
-        (right) => right.toFixed() === "bar"
+        (right) => right.toFixed() === "bar",
       );
 
       expect(result).toBe(false);

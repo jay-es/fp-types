@@ -10,7 +10,7 @@ interface IResult {
   equal(
     other: IResult,
     okFn: (v1: unknown, v2: unknown) => boolean,
-    errFn: (e1: unknown, e2: unknown) => boolean
+    errFn: (e1: unknown, e2: unknown) => boolean,
   ): boolean;
   bind<U>(fn: (value: unknown) => Ok<U>): IResult;
   map<U>(fn: (value: unknown) => U): IResult;
@@ -51,7 +51,7 @@ export class Ok<T> implements IResult {
   equal(
     other: Ok<T> | Err<unknown>,
     okFn: (v1: T, v2: T) => boolean = equalFn,
-    errFn: (e1: never, e2: never) => boolean = equalFn
+    errFn: (e1: never, e2: never) => boolean = equalFn,
   ): boolean {
     return other.isOk() && okFn(this.#value, other.getOk());
   }
@@ -115,7 +115,7 @@ export class Err<E> implements IResult {
   equal(
     other: Ok<unknown> | Err<E>,
     okFn: (v1: never, v2: never) => boolean = equalFn,
-    errFn: (e1: E, e2: E) => boolean = equalFn
+    errFn: (e1: E, e2: E) => boolean = equalFn,
   ): boolean {
     return other.isErr() && errFn(this.#error, other.getErr());
   }

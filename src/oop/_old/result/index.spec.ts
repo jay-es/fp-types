@@ -101,7 +101,7 @@ describe("Result", () => {
           assertType<Equal<typeof e1, number>>();
           assertType<Equal<typeof e2, number>>();
           return true;
-        }
+        },
       );
     });
 
@@ -121,7 +121,7 @@ describe("Result", () => {
           assertType<Equal<typeof e1, number>>();
           assertType<Equal<typeof e2, number>>();
           return true;
-        }
+        },
       );
     });
   });
@@ -171,7 +171,7 @@ describe("Result", () => {
       const ok = new Ok("foo") as Result<string, number>;
       const folded = ok.fold(
         (value) => Symbol(value.substring(1)),
-        (error) => Symbol(error.toFixed(1))
+        (error) => Symbol(error.toFixed(1)),
       );
 
       // 変換された型に推論される
@@ -182,7 +182,7 @@ describe("Result", () => {
       const err = new Err(42) as Result<string, number>;
       const folded = err.fold(
         (value) => Symbol(value.substring(1)),
-        (error) => Symbol(error.toFixed(1))
+        (error) => Symbol(error.toFixed(1)),
       );
 
       // 変換された型に推論される

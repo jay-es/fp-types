@@ -97,7 +97,7 @@ describe("Either", () => {
           assertType<Equal<typeof r1, number>>();
           assertType<Equal<typeof r2, number>>();
           return true;
-        }
+        },
       );
     });
 
@@ -117,7 +117,7 @@ describe("Either", () => {
           assertType<Equal<typeof r1, number>>();
           assertType<Equal<typeof r2, number>>();
           return true;
-        }
+        },
       );
     });
   });
@@ -149,7 +149,7 @@ describe("Either", () => {
       const left = new Left("foo") as Either<string, number>;
       const mapped = left.map(
         (value) => value.endsWith("a"),
-        (value) => value.toFixed(1)
+        (value) => value.toFixed(1),
       );
 
       // 両方とも変換された Either 型に推論される
@@ -160,7 +160,7 @@ describe("Either", () => {
       const right = new Right(42) as Either<string, number>;
       const mapped = right.map(
         (value) => value.endsWith("a"),
-        (value) => value.toFixed(1)
+        (value) => value.toFixed(1),
       );
 
       // 両方とも変換された Either 型に推論される
@@ -173,7 +173,7 @@ describe("Either", () => {
       const left = new Left("foo") as Either<string, number>;
       const folded = left.fold(
         (value) => Symbol(value.substring(1)),
-        (value) => Symbol(value.toFixed(1))
+        (value) => Symbol(value.toFixed(1)),
       );
 
       // 変換された型に推論される
@@ -184,7 +184,7 @@ describe("Either", () => {
       const right = new Right(42) as Either<string, number>;
       const folded = right.fold(
         (value) => Symbol(value.substring(1)),
-        (value) => Symbol(value.toFixed(1))
+        (value) => Symbol(value.toFixed(1)),
       );
 
       // 変換された型に推論される
@@ -199,7 +199,7 @@ describe("Either", () => {
       // 引数の型をテスト
       left.iter(
         (value) => assertType<Equal<typeof value, string>>(),
-        (value) => assertType<Equal<typeof value, number>>()
+        (value) => assertType<Equal<typeof value, number>>(),
       );
     });
 
@@ -209,7 +209,7 @@ describe("Either", () => {
       // 引数の型をテスト
       right.iter(
         (value) => assertType<Equal<typeof value, string>>(),
-        (value) => assertType<Equal<typeof value, number>>()
+        (value) => assertType<Equal<typeof value, number>>(),
       );
     });
   });
@@ -219,7 +219,7 @@ describe("Either", () => {
       const left = new Left("foo") as Either<string, number>;
       const result = left.forAll(
         (value) => value.endsWith("a"),
-        (value) => value.toFixed() === "bar"
+        (value) => value.toFixed() === "bar",
       );
 
       // boolean に推論される
@@ -230,7 +230,7 @@ describe("Either", () => {
       const right = new Right(42) as Either<string, number>;
       const result = right.forAll(
         (value) => value.endsWith("a"),
-        (value) => value.toFixed() === "bar"
+        (value) => value.toFixed() === "bar",
       );
 
       // boolean に推論される

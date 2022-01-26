@@ -120,7 +120,7 @@ describe("Result", () => {
       const ok = Result.ok("foo");
       const folded = ok.fold(
         (value) => Symbol(value.substring(1)),
-        (never) => Symbol()
+        (never) => Symbol(),
       );
 
       expect(folded.description).toBe("oo");
@@ -130,7 +130,7 @@ describe("Result", () => {
       const err = Result.err(42);
       const folded = err.fold(
         (never) => Symbol(),
-        (error) => Symbol(error.toFixed(1))
+        (error) => Symbol(error.toFixed(1)),
       );
 
       expect(folded.description).toBe("42.0");

@@ -39,7 +39,7 @@ export class Some<T> implements IOption {
 
   equal(
     other: Some<T> | None,
-    fn: (v1: T, v2: T) => boolean = equalFn
+    fn: (v1: T, v2: T) => boolean = equalFn,
   ): boolean {
     return other.isSome() && fn(this.#value, other.get());
   }
@@ -84,7 +84,7 @@ export class None implements IOption {
 
   equal<T>(
     other: Some<T> | None,
-    fn: (v1: never, v2: T) => boolean = equalFn
+    fn: (v1: never, v2: T) => boolean = equalFn,
   ): boolean {
     return other.isNone();
   }

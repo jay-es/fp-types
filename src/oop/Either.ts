@@ -22,7 +22,7 @@ export class Either<L, R> {
   readonly [rrr]?: R;
 
   private constructor(
-    param: { type: "Left"; left: L } | { type: "Right"; right: R }
+    param: { type: "Left"; left: L } | { type: "Right"; right: R },
   ) {
     this.#type = param.type;
     if (param.type === "Left") this[lll] = param.left;
@@ -41,7 +41,7 @@ export class Either<L, R> {
 
   private match<L2, R2>(
     leftFn: (left: L) => L2,
-    rightFn: (right: R) => R2
+    rightFn: (right: R) => R2,
   ): L2 | R2 {
     if (this.isLeft()) return leftFn(this[lll]);
     if (this.isRight()) return rightFn(this[rrr]);
@@ -83,7 +83,7 @@ export class Either<L, R> {
   equal(
     other: Either<L, R>,
     leftFn: (l1: L, l2: L) => boolean = equalFn,
-    rightFn: (r1: R, r2: R) => boolean = equalFn
+    rightFn: (r1: R, r2: R) => boolean = equalFn,
   ): boolean {
     if (this.isLeft() && other.isLeft()) {
       return leftFn(this[lll], other[lll]);
@@ -99,24 +99,24 @@ export class Either<L, R> {
   mapLeft<L2>(leftFn: (left: L) => L2): Either<L2, R> {
     return this.match(
       (left) => Either.left(leftFn(left)),
-      (right) => Either.right(right)
+      (right) => Either.right(right),
     );
   }
 
   mapRight<R2>(rightFn: (right: R) => R2): Either<L, R2> {
     return this.match(
       (left) => Either.left(left),
-      (right) => Either.right(rightFn(right))
+      (right) => Either.right(rightFn(right)),
     );
   }
 
   map<L2, R2>(
     leftFn: (left: L) => L2,
-    rightFn: (right: R) => R2
+    rightFn: (right: R) => R2,
   ): Either<L2, R2> {
     return this.match(
       (left) => Either.left(leftFn(left)),
-      (right) => Either.right(rightFn(right))
+      (right) => Either.right(rightFn(right)),
     );
   }
 
@@ -130,7 +130,7 @@ export class Either<L, R> {
 
   forAll(
     leftFn: (left: L) => boolean,
-    rightFn: (right: R) => boolean
+    rightFn: (right: R) => boolean,
   ): boolean {
     return this.match(leftFn, rightFn);
   }

@@ -72,7 +72,7 @@ export class Option<T> {
   map<U>(fn: (value: T) => U): Option<U> {
     return this.match(
       (value) => Option.some(fn(value)), // line-break
-      Option.none<U>()
+      Option.none<U>(),
     );
   }
 
