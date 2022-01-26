@@ -1,5 +1,5 @@
 /* eslint-env node */
-module.exports = {
+module.exports = /** @type {import("eslint/lib/shared/types").ConfigData} */ ({
   env: {
     es2021: true,
   },
@@ -27,7 +27,14 @@ module.exports = {
       },
     ],
 
-    // 未使用引数を許可
-    "@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
+    "@typescript-eslint/explicit-module-boundary-types": "warn",
   },
-};
+  overrides: [
+    {
+      files: ["*.spec.ts", "src/oop/_old/**"],
+      rules: {
+        "@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
+      },
+    },
+  ],
+});

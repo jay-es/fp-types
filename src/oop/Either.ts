@@ -15,29 +15,27 @@ type Right<R> = {
   [rrr]: R;
 };
 
-type Type = "Left" | "Right";
-
 export class Either<L, R> {
-  readonly #type: Type;
+  readonly #type: "Left" | "Right";
   readonly [lll]?: L;
   readonly [rrr]?: R;
 
   private constructor(
-    param: { type: "Left"; left: L } | { type: "Right"; right: R },
+    param: ({ type: "Left" } & Left<L>) | ({ type: "Right" } & Right<R>),
   ) {
     this.#type = param.type;
-    if (param.type === "Left") this[lll] = param.left;
-    if (param.type === "Right") this[rrr] = param.right;
+    this[lll] = param[lll];
+    this[rrr] = param[rrr];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static left<L, R = any>(left: L): Either<L, R> {
-    return new Either({ type: "Left", left });
+    return new Either({ type: "Left", [lll]: left });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static right<R, L = any>(right: R): Either<L, R> {
-    return new Either({ type: "Right", right });
+    return new Either({ type: "Right", [rrr]: right });
   }
 
   private match<L2, R2>(

@@ -15,29 +15,27 @@ type Err<E> = {
   [eee]: E;
 };
 
-type Type = "Ok" | "Err";
-
 export class Result<T, E> {
-  readonly #type: Type;
+  readonly #type: "Ok" | "Err";
   readonly [vvv]?: T;
   readonly [eee]?: E;
 
   private constructor(
-    param: { type: "Ok"; value: T } | { type: "Err"; error: E },
+    param: ({ type: "Ok" } & Ok<T>) | ({ type: "Err" } & Err<E>),
   ) {
     this.#type = param.type;
-    if (param.type === "Ok") this[vvv] = param.value;
-    if (param.type === "Err") this[eee] = param.error;
+    this[vvv] = param[vvv];
+    this[eee] = param[eee];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static ok<T, E = any>(value: T): Result<T, E> {
-    return new Result({ type: "Ok", value });
+    return new Result({ type: "Ok", [vvv]: value });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static err<E, T = any>(error: E): Result<T, E> {
-    return new Result({ type: "Err", error });
+    return new Result({ type: "Err", [eee]: error });
   }
 
   private match<U, F>(okFn: (value: T) => U, errFn: (error: E) => F): U | F {
