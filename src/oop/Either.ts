@@ -21,11 +21,11 @@ export class Either<L, R> {
   readonly [rrr]?: R;
 
   private constructor(
-    param: ({ type: "Left" } & Left<L>) | ({ type: "Right" } & Right<R>),
+    options: ({ type: "Left" } & Left<L>) | ({ type: "Right" } & Right<R>),
   ) {
-    this.#type = param.type;
-    this[lll] = param[lll];
-    this[rrr] = param[rrr];
+    this.#type = options.type;
+    this[lll] = options[lll];
+    this[rrr] = options[rrr];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

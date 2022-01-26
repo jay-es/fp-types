@@ -21,11 +21,11 @@ export class Result<T, E> {
   readonly [eee]?: E;
 
   private constructor(
-    param: ({ type: "Ok" } & Ok<T>) | ({ type: "Err" } & Err<E>),
+    options: ({ type: "Ok" } & Ok<T>) | ({ type: "Err" } & Err<E>),
   ) {
-    this.#type = param.type;
-    this[vvv] = param[vvv];
-    this[eee] = param[eee];
+    this.#type = options.type;
+    this[vvv] = options[vvv];
+    this[eee] = options[eee];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
