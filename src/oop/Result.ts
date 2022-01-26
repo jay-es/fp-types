@@ -1,4 +1,5 @@
 import { equalFn, makeNever } from "~/src/shared/helpers";
+import { flow } from "~/src/utils";
 import { Option } from "./Option";
 
 const vvv = Symbol();
@@ -94,17 +95,11 @@ export class Result<T, E> {
   }
 
   map<U>(okFn: (value: T) => U): Result<U, E> {
-    return this.match(
-      (value) => Result.ok(okFn(value)),
-      (error) => Result.err(error),
-    );
+    return this.match(flow(okFn, Result.ok), Result.err);
   }
 
   mapErr<F>(errFn: (error: E) => F): Result<T, F> {
-    return this.match(
-      (value) => Result.ok(value),
-      (error) => Result.err(errFn(error)),
-    );
+    return this.match(Result.ok, flow(errFn, Result.err));
   }
 
   fold<U>(okFn: (value: T) => U, errFn: (error: E) => U): U {

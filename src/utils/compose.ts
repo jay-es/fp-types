@@ -1,4 +1,5 @@
 /**
+ * right-to-left composition function
  * @example compose(f, g)(x) === f(g(x))
  */
 export const compose: Compose = (...fns: ((param: unknown) => unknown)[]) => {

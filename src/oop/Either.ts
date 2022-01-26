@@ -1,4 +1,5 @@
 import { equalFn, makeNever } from "~/src/shared/helpers";
+import { flow } from "~/src/utils";
 import { Option } from "./Option";
 
 const lll = Symbol();
@@ -97,27 +98,18 @@ export class Either<L, R> {
   }
 
   mapLeft<L2>(leftFn: (left: L) => L2): Either<L2, R> {
-    return this.match(
-      (left) => Either.left(leftFn(left)),
-      (right) => Either.right(right),
-    );
+    return this.match(flow(leftFn, Either.left), Either.right);
   }
 
   mapRight<R2>(rightFn: (right: R) => R2): Either<L, R2> {
-    return this.match(
-      (left) => Either.left(left),
-      (right) => Either.right(rightFn(right)),
-    );
+    return this.match(Either.left, flow(rightFn, Either.right));
   }
 
   map<L2, R2>(
     leftFn: (left: L) => L2,
     rightFn: (right: R) => R2,
   ): Either<L2, R2> {
-    return this.match(
-      (left) => Either.left(leftFn(left)),
-      (right) => Either.right(rightFn(right)),
-    );
+    return this.match(flow(leftFn, Either.left), flow(rightFn, Either.right));
   }
 
   fold<T>(leftFn: (left: L) => T, rightFn: (right: R) => T): T {

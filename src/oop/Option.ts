@@ -1,4 +1,5 @@
 import { equalFn, makeNever } from "~/src/shared/helpers";
+import { flow } from "~/src/utils";
 import { Result } from "./Result";
 
 const vvv = Symbol();
@@ -70,10 +71,7 @@ export class Option<T> {
   }
 
   map<U>(fn: (value: T) => U): Option<U> {
-    return this.match(
-      (value) => Option.some(fn(value)), // line-break
-      Option.none<U>(),
-    );
+    return this.match(flow(fn, Option.some), Option.none<U>());
   }
 
   fold<U>(none: U, fn: (value: T) => U): U {
