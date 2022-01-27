@@ -79,6 +79,36 @@ describe("Result", () => {
     });
   });
 
+  describe("compare", () => {
+    it("Ok", () => {
+      const ok1 = Result.ok("foo");
+      const ok2 = Result.ok("foo");
+      const ok3 = Result.ok("bar");
+      const err = Result.err("foo");
+
+      const compareLength = (a: string, b: string) => a.length - b.length;
+
+      expect(ok1.compare(ok2)).toBe(0);
+      expect(ok1.compare(ok3)).toBe(1);
+      expect(ok1.compare(ok3, compareLength)).toBe(0);
+
+      expect(ok1.compare(err)).toBe(-1);
+      expect(err.compare(ok1)).toBe(1);
+    });
+
+    it("Err", () => {
+      const err1 = Result.err(42);
+      const err2 = Result.err(42);
+      const err3 = Result.err(7);
+
+      const mod = (a: number, b: number) => a % b;
+
+      expect(err1.compare(err2)).toBe(0);
+      expect(err1.compare(err3)).toBe(1);
+      expect(err1.compare(err3, undefined, mod)).toBe(0);
+    });
+  });
+
   describe("bind", () => {
     it("Ok", () => {
       const ok = Result.ok("foo");

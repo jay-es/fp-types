@@ -123,6 +123,50 @@ describe("Either: type tests", () => {
     });
   });
 
+  describe("equal", () => {
+    it("Left", () => {
+      const left1 = Either.left("foo") as Either<string, number>;
+      const left2 = Either.left("foo") as Either<string, number>;
+
+      // 引数の型をテスト
+      Either.compare(
+        left1,
+        left2,
+        (l1, l2) => {
+          assertType<Equal<typeof l1, string>>();
+          assertType<Equal<typeof l2, string>>();
+          return 1;
+        },
+        (r1, r2) => {
+          assertType<Equal<typeof r1, number>>();
+          assertType<Equal<typeof r2, number>>();
+          return 1;
+        },
+      );
+    });
+
+    it("Right", () => {
+      const right1 = Either.right(42) as Either<string, number>;
+      const right2 = Either.right(42) as Either<string, number>;
+
+      // 引数の型をテスト
+      Either.compare(
+        right1,
+        right2,
+        (l1, l2) => {
+          assertType<Equal<typeof l1, string>>();
+          assertType<Equal<typeof l2, string>>();
+          return 1;
+        },
+        (r1, r2) => {
+          assertType<Equal<typeof r1, number>>();
+          assertType<Equal<typeof r2, number>>();
+          return 1;
+        },
+      );
+    });
+  });
+
   describe("mapLeft, mapRight", () => {
     it("Left", () => {
       const left = Either.left("foo") as Either<string, number>;

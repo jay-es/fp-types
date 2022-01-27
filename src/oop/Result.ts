@@ -1,4 +1,4 @@
-import { equalFn, makeNever } from "~/src/shared/helpers";
+import { compareFn, equalFn, makeNever } from "~/src/shared/helpers";
 import { flow } from "~/src/utils";
 import { Option } from "./Option";
 
@@ -86,6 +86,22 @@ export class Result<T, E> {
     }
 
     return false;
+  }
+
+  compare(
+    other: Result<T, E>,
+    okFn: (v1: T, v2: T) => number = compareFn,
+    errFn: (e1: E, e2: E) => number = compareFn,
+  ): number {
+    if (this.isOk() && other.isOk()) {
+      return okFn(this[vvv], other[vvv]);
+    }
+
+    if (this.isErr() && other.isErr()) {
+      return errFn(this[eee], other[eee]);
+    }
+
+    return this.isOk() ? -1 : 1;
   }
 
   bind<U>(okFn: (value: T) => Result<U, E>): Result<U, E> {

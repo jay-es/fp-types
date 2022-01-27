@@ -84,6 +84,36 @@ describe("Either", () => {
     });
   });
 
+  describe("compare", () => {
+    it("Left", () => {
+      const left1 = Either.left("foo");
+      const left2 = Either.left("foo");
+      const left3 = Either.left("bar");
+      const right = Either.right("foo");
+
+      const compareLength = (a: string, b: string) => a.length - b.length;
+
+      expect(Either.compare(left1, left2)).toBe(0);
+      expect(Either.compare(left1, left3)).toBe(1);
+      expect(Either.compare(left1, left3, compareLength)).toBe(0);
+
+      expect(Either.compare(left1, right)).toBe(-1);
+      expect(Either.compare(right, left1)).toBe(1);
+    });
+
+    it("Right", () => {
+      const right1 = Either.right(42);
+      const right2 = Either.right(42);
+      const right3 = Either.right(7);
+
+      const mod = (a: number, b: number) => a % b;
+
+      expect(Either.compare(right1, right2)).toBe(0);
+      expect(Either.compare(right1, right3)).toBe(1);
+      expect(Either.compare(right1, right3, undefined, mod)).toBe(0);
+    });
+  });
+
   describe("mapLeft, mapRight", () => {
     it("Left", () => {
       const left = Either.left("foo");

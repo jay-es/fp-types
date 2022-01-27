@@ -1,4 +1,4 @@
-import { equalFn } from "~/src/shared/helpers";
+import { compareFn, equalFn } from "~/src/shared/helpers";
 import { Option } from ".";
 
 export type Left<L> = {
@@ -66,6 +66,23 @@ export const equal = <L, R>(
   }
 
   return false;
+};
+
+export const compare = <L, R>(
+  either: Either<L, R>,
+  other: Either<L, R>,
+  leftFn: (l1: L, l2: L) => number = compareFn,
+  rightFn: (r1: R, r2: R) => number = compareFn,
+): number => {
+  if (isLeft(either) && isLeft(other)) {
+    return leftFn(either.left, other.left);
+  }
+
+  if (isRight(either) && isRight(other)) {
+    return rightFn(either.right, other.right);
+  }
+
+  return isLeft(either) ? -1 : 1;
 };
 
 export const mapLeft = <L, R, L2>(

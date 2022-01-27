@@ -1,4 +1,4 @@
-import { equalFn } from "~/src/shared/helpers";
+import { compareFn, equalFn } from "~/src/shared/helpers";
 import { Option } from ".";
 
 export type Ok<T> = {
@@ -63,6 +63,23 @@ export const equal = <T, E>(
   }
 
   return false;
+};
+
+export const compare = <T, E>(
+  result: Result<T, E>,
+  other: Result<T, E>,
+  okFn: (v1: T, v2: T) => number = compareFn,
+  errFn: (e1: E, e2: E) => number = compareFn,
+): number => {
+  if (isOk(result) && isOk(other)) {
+    return okFn(result.value, other.value);
+  }
+
+  if (isErr(result) && isErr(other)) {
+    return errFn(result.error, other.error);
+  }
+
+  return isOk(result) ? -1 : 1;
 };
 
 export const bind = <T, E, U>(

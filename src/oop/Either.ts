@@ -1,4 +1,4 @@
-import { equalFn, makeNever } from "~/src/shared/helpers";
+import { compareFn, equalFn, makeNever } from "~/src/shared/helpers";
 import { flow } from "~/src/utils";
 import { Option } from "./Option";
 
@@ -93,6 +93,22 @@ export class Either<L, R> {
     }
 
     return false;
+  }
+
+  compare(
+    other: Either<L, R>,
+    leftFn: (l1: L, l2: L) => number = compareFn,
+    rightFn: (r1: R, r2: R) => number = compareFn,
+  ): number {
+    if (this.isLeft() && other.isLeft()) {
+      return leftFn(this[lll], other[lll]);
+    }
+
+    if (this.isRight() && other.isRight()) {
+      return rightFn(this[rrr], other[rrr]);
+    }
+
+    return this.isLeft() ? -1 : 1;
   }
 
   mapLeft<L2>(leftFn: (left: L) => L2): Either<L2, R> {

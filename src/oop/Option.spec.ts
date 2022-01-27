@@ -72,6 +72,30 @@ describe("Option", () => {
     });
   });
 
+  describe("compare", () => {
+    it("Some", () => {
+      const some1 = Option.some("foo");
+      const some2 = Option.some("foo");
+      const some3 = Option.some("bar");
+
+      const compareLength = (a: string, b: string) => a.length - b.length;
+
+      expect(some1.compare(some2)).toBe(0);
+      expect(some1.compare(some3)).toBe(1);
+      expect(some1.compare(some3, compareLength)).toBe(0);
+    });
+
+    it("None", () => {
+      const none1 = Option.none();
+      const none2 = Option.none();
+      const some = Option.some("foo");
+
+      expect(none1.compare(none2)).toBe(0);
+      expect(some.compare(none2)).toBe(1);
+      expect(none1.compare(some)).toBe(-1);
+    });
+  });
+
   describe("bind", () => {
     it("Some", () => {
       const some = Option.some("foo");

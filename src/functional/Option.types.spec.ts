@@ -111,6 +111,46 @@ describe("Option: type tests", () => {
     });
   });
 
+  describe("compare", () => {
+    it("Some", () => {
+      const some1 = Option.some("foo") as Option<string>;
+      const some2 = Option.some("foo") as Option<string>;
+      const none = Option.none() as Option<string>;
+
+      // 引数の型をテスト
+      Option.compare(some1, some2, (v1, v2) => {
+        assertType<Equal<typeof v1, string>>();
+        assertType<Equal<typeof v2, string>>();
+        return 1;
+      });
+
+      Option.compare(some1, none, (v1, v2) => {
+        assertType<Equal<typeof v1, string>>();
+        assertType<Equal<typeof v2, string>>();
+        return 1;
+      });
+    });
+
+    it("None", () => {
+      const none1 = Option.none() as Option<string>;
+      const none2 = Option.none() as Option<string>;
+      const some = Option.some("foo") as Option<string>;
+
+      // 引数の型をテスト
+      Option.compare(none1, none2, (v1, v2) => {
+        assertType<Equal<typeof v1, string>>();
+        assertType<Equal<typeof v2, string>>();
+        return 1;
+      });
+
+      Option.compare(none1, some, (v1, v2) => {
+        assertType<Equal<typeof v1, string>>();
+        assertType<Equal<typeof v2, string>>();
+        return 1;
+      });
+    });
+  });
+
   describe("bind", () => {
     it("Some", () => {
       const some = Option.some("foo") as Option<string>;

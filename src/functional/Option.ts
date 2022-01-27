@@ -1,4 +1,4 @@
-import { equalFn } from "~/src/shared/helpers";
+import { compareFn, equalFn } from "~/src/shared/helpers";
 import { Result } from ".";
 
 export type Some<T> = {
@@ -43,12 +43,20 @@ export const equal = <T>(
   option2: Option<T>,
   // ↓ in OCaml, this is first parameter. but last for optional
   fn: (v1: T, v2: T) => boolean = equalFn,
-): boolean => {
-  if (isNone(option1) && isNone(option2)) return true;
-  if (isNone(option1) || isNone(option2)) return false;
+): boolean =>
+  isSome(option1) && isSome(option2)
+    ? fn(option1.value, option2.value)
+    : isNone(option1) && isNone(option2);
 
-  return fn(option1.value, option2.value);
-};
+export const compare = <T>(
+  option1: Option<T>,
+  option2: Option<T>,
+  // ↓ in OCaml, this is first parameter. but last for optional
+  fn: (v1: T, v2: T) => number = compareFn,
+): number =>
+  isSome(option1) && isSome(option2)
+    ? fn(option1.value, option2.value)
+    : compareFn(isSome(option1), isSome(option2));
 
 export const bind = <T, U>(
   option: Option<T>,
