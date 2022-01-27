@@ -3,37 +3,30 @@
 Functional programming types for TypeScript.
 Provides most of OCaml's `Option`, `Result` and `Either` APIs.
 
-<!--
-TODO: 型×メソッドの ⭕ ❌ テーブル作成
+### Examples
 
-1. Function Style
+1. Functional Style
 
 ```ts
 const fn = (): Option<string> => {
-  const result = doSomething();
-
-  if (!result) return Option.none();
-
-  return Option.some(result);
+  return Math.random() > 0.5 ? Option.some("foo") : Option.none();
 };
 
-const optionValue = fn();
+const res = fn();
 
-console.log(Option.isSome(optionValue)); // true or false
+console.log(Option.isSome(res)); // true or false
+console.log(Option.value(res, "bar")); // "foo" or "bar"
 ```
--->
 
-1. Class Style
-   the Rust-like APIs
+2. OOP Style (Rust-like API)
 
 ```ts
 const fn = (): Option<string> => {
-  const result = doSomething();
-
-  return result ? Option.some(result) : Option.none();
+  return Math.random() > 0.5 ? Option.some("foo") : Option.none();
 };
 
-const value = fn();
+const res = fn();
 
-console.log(value.isSome()); // true or false
+console.log(res.isSome()); // true or false
+console.log(res.value("bar")); // "foo" or "bar"
 ```
