@@ -1,5 +1,5 @@
-import { compareFn, equalFn, makeNever } from "~/src/shared/helpers";
-import { flow } from "~/src/utils";
+import { compareFn, equalFn, makeNever } from "~/shared/helpers";
+import { flow } from "~/utils";
 import { Option } from "./Option";
 
 const vvv = Symbol();

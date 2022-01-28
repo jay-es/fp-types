@@ -1,5 +1,5 @@
 import { None, Option, Some } from "../option";
-import { equalFn } from "~/src/shared/helpers";
+import { equalFn } from "~/shared/helpers";
 
 interface IEither {
   isLeft(): boolean;

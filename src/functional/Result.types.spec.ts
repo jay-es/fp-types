@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assertType, Equal } from "~/test/assert";
+import { assertType, Equal } from "~~/test/assert";
 import { Err, Ok, Option, Result } from ".";
 
 describe("Result: type tests", () => {

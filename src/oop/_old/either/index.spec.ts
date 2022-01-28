@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { assertType, Equal } from "~/test/assert";
+import { assertType, Equal } from "~~/test/assert";
 import type { Option } from "../option";
 import { Either, Left, Right } from "./index";
 

@@ -1,4 +1,4 @@
-import { compareFn, equalFn } from "~/src/shared/helpers";
+import { compareFn, equalFn } from "~/shared/helpers";
 import { Option } from ".";
 
 export type Ok<T> = {
