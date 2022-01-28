@@ -11,7 +11,7 @@ describe("Result", () => {
     });
 
     it("Err", () => {
-      const err = Result.err(42) as Result<string, number>;
+      const err = Result.err(42);
 
       expect(Result.isOk(err)).toBe(false);
       expect(Result.isErr(err)).toBe(true);

@@ -3,9 +3,14 @@ import { assertType, Equal } from "~~/test/assert";
 import { None, Option, Result, Some } from "./";
 
 describe("Option: type tests", () => {
+  it("union type", () => {
+    const value = Math.random() ? Option.some("foo") : Option.none();
+    assertType<Equal<typeof value, Option<string>>>();
+  });
+
   describe("isSome, isNone", () => {
     it("Some", () => {
-      const some = Option.some("foo") as Option<string>;
+      const some = Option.some("foo");
 
       if (Option.isSome(some)) {
         assertType<Equal<typeof some, Some<string>>>();
@@ -17,10 +22,10 @@ describe("Option: type tests", () => {
     });
 
     it("None", () => {
-      const none = Option.none() as Option<string>;
+      const none = Option.none();
 
       if (Option.isSome(none)) {
-        assertType<Equal<typeof none, Some<string>>>();
+        assertType<Equal<typeof none, Some<never>>>();
       }
 
       if (Option.isNone(none)) {
@@ -31,7 +36,7 @@ describe("Option: type tests", () => {
 
   describe("value", () => {
     it("Some", () => {
-      const some = Option.some("foo") as Option<string>;
+      const some = Option.some("foo");
 
       // @ts-expect-error 文字列以外はエラー
       Option.value(some, 42);
@@ -53,7 +58,7 @@ describe("Option: type tests", () => {
 
   describe("get", () => {
     it("Some", () => {
-      const some = Option.some("foo") as Option<string>;
+      const some = Option.some("foo");
       const value = Option.get(some);
 
       // string に推論される
@@ -73,9 +78,9 @@ describe("Option: type tests", () => {
 
   describe("equal", () => {
     it("Some", () => {
-      const some1 = Option.some("foo") as Option<string>;
-      const some2 = Option.some("foo") as Option<string>;
-      const none = Option.none() as Option<string>;
+      const some1 = Option.some("foo");
+      const some2 = Option.some("foo");
+      const none = Option.none();
 
       // 引数の型をテスト
       Option.equal(some1, some2, (v1, v2) => {
@@ -92,9 +97,9 @@ describe("Option: type tests", () => {
     });
 
     it("None", () => {
-      const none1 = Option.none() as Option<string>;
+      const none1 = Option.none();
       const none2 = Option.none() as Option<string>;
-      const some = Option.some("foo") as Option<string>;
+      const some = Option.some("foo");
 
       // 引数の型をテスト
       Option.equal(none1, none2, (v1, v2) => {
@@ -113,9 +118,9 @@ describe("Option: type tests", () => {
 
   describe("compare", () => {
     it("Some", () => {
-      const some1 = Option.some("foo") as Option<string>;
-      const some2 = Option.some("foo") as Option<string>;
-      const none = Option.none() as Option<string>;
+      const some1 = Option.some("foo");
+      const some2 = Option.some("foo");
+      const none = Option.none();
 
       // 引数の型をテスト
       Option.compare(some1, some2, (v1, v2) => {
@@ -132,9 +137,9 @@ describe("Option: type tests", () => {
     });
 
     it("None", () => {
-      const none1 = Option.none() as Option<string>;
+      const none1 = Option.none();
       const none2 = Option.none() as Option<string>;
-      const some = Option.some("foo") as Option<string>;
+      const some = Option.some("foo");
 
       // 引数の型をテスト
       Option.compare(none1, none2, (v1, v2) => {
@@ -153,7 +158,7 @@ describe("Option: type tests", () => {
 
   describe("bind", () => {
     it("Some", () => {
-      const some = Option.some("foo") as Option<string>;
+      const some = Option.some("foo");
       const bound = Option.bind(some, (value) =>
         Option.some(value.endsWith("a")),
       );
@@ -163,7 +168,7 @@ describe("Option: type tests", () => {
     });
 
     it("None", () => {
-      const none = Option.none() as Option<string>;
+      const none = Option.none();
       const bound = Option.bind(none, (value) => Option.some(7));
 
       // 変換された Option 型に推論される
@@ -173,7 +178,7 @@ describe("Option: type tests", () => {
 
   describe("map", () => {
     it("Some", () => {
-      const some = Option.some("foo") as Option<string>;
+      const some = Option.some("foo");
       const mapped = Option.map((value) => value.endsWith("a"), some);
 
       // 変換された Option 型に推論される
@@ -181,7 +186,7 @@ describe("Option: type tests", () => {
     });
 
     it("None", () => {
-      const none = Option.none() as Option<string>;
+      const none = Option.none();
       const mapped = Option.map((value) => 7, none);
 
       // 変換された Option 型に推論される
@@ -191,7 +196,7 @@ describe("Option: type tests", () => {
 
   describe("fold", () => {
     it("Some", () => {
-      const some = Option.some("foo") as Option<string>;
+      const some = Option.some("foo");
       const folded = Option.fold(true, (value) => value.endsWith("a"), some);
 
       // 変換された Option 型に推論される
@@ -209,7 +214,7 @@ describe("Option: type tests", () => {
 
   describe("iter", () => {
     it("Some", () => {
-      const some = Option.some("foo") as Option<string>;
+      const some = Option.some("foo");
 
       // 引数の型をテスト
       Option.iter((value) => assertType<Equal<typeof value, string>>(), some);
@@ -236,7 +241,7 @@ describe("Option: type tests", () => {
       const result = Option.toResult(42, none);
 
       // 型を指定しないと unknown になる
-      assertType<Equal<typeof result, Result<unknown, number>>>();
+      assertType<Equal<typeof result, Result<never, number>>>();
     });
   });
 });

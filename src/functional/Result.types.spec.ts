@@ -1,11 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { assertType, Equal } from "~~/test/assert";
+import { assertType, Equal, NotEqual } from "~~/test/assert";
 import { Err, Ok, Option, Result } from ".";
 
 describe("Result: type tests", () => {
+  it("union type", () => {
+    const ok = Result.ok("foo");
+    const err = Result.err(42);
+    const value = Math.random() ? ok : err;
+
+    assertType<NotEqual<typeof ok, Ok<string>>>();
+    assertType<Equal<typeof value, Result<string, number>>>();
+  });
+
   describe("isOk, isErr", () => {
     it("Ok", () => {
-      const ok = Result.ok("foo") as Result<string, number>;
+      const ok = Result.ok<string, number>("foo");
 
       if (Result.isOk(ok)) {
         assertType<Equal<typeof ok, Ok<string>>>();
@@ -17,7 +26,7 @@ describe("Result: type tests", () => {
     });
 
     it("Err", () => {
-      const err = Result.err(42) as Result<string, number>;
+      const err = Result.err<string, number>(42);
 
       if (Result.isOk(err)) {
         assertType<Equal<typeof err, Ok<string>>>();
@@ -31,7 +40,7 @@ describe("Result: type tests", () => {
 
   describe("value", () => {
     it("Ok", () => {
-      const ok = Result.ok("foo") as Result<string, number>;
+      const ok = Result.ok<string, number>("foo");
 
       // @ts-expect-error 文字列以外はエラー
       Result.value(ok);
@@ -43,7 +52,7 @@ describe("Result: type tests", () => {
     });
 
     it("Err", () => {
-      const err = Result.err(42) as Result<string, number>;
+      const err = Result.err<string, number>(42);
 
       // @ts-expect-error 文字列以外はエラー
       Result.value(err);
@@ -57,7 +66,7 @@ describe("Result: type tests", () => {
 
   describe("getOk, getErr", () => {
     it("Ok", () => {
-      const ok = Result.ok("foo") as Result<string, number>;
+      const ok = Result.ok<string, number>("foo");
 
       const value = Result.getOk(ok);
       assertType<Equal<typeof value, string>>();
@@ -70,7 +79,7 @@ describe("Result: type tests", () => {
     });
 
     it("Err", () => {
-      const err = Result.err(42) as Result<string, number>;
+      const err = Result.err<string, number>(42);
 
       expect(() => {
         // 実際にはエラーになるが、string に推論される
@@ -85,8 +94,8 @@ describe("Result: type tests", () => {
 
   describe("equal", () => {
     it("Ok", () => {
-      const ok1 = Result.ok("foo") as Result<string, number>;
-      const ok2 = Result.ok("foo") as Result<string, number>;
+      const ok1 = Result.ok<string, number>("foo");
+      const ok2 = Result.ok<string, number>("foo");
 
       // 引数の型をテスト
       Result.equal(
@@ -106,8 +115,8 @@ describe("Result: type tests", () => {
     });
 
     it("Err", () => {
-      const err1 = Result.err(42) as Result<string, number>;
-      const err2 = Result.err(42) as Result<string, number>;
+      const err1 = Result.err<string, number>(42);
+      const err2 = Result.err<string, number>(42);
 
       // 引数の型をテスト
       Result.equal(
@@ -129,8 +138,8 @@ describe("Result: type tests", () => {
 
   describe("equal", () => {
     it("Ok", () => {
-      const ok1 = Result.ok("foo") as Result<string, number>;
-      const ok2 = Result.ok("foo") as Result<string, number>;
+      const ok1 = Result.ok<string, number>("foo");
+      const ok2 = Result.ok<string, number>("foo");
 
       // 引数の型をテスト
       Result.compare(
@@ -150,8 +159,8 @@ describe("Result: type tests", () => {
     });
 
     it("Err", () => {
-      const err1 = Result.err(42) as Result<string, number>;
-      const err2 = Result.err(42) as Result<string, number>;
+      const err1 = Result.err<string, number>(42);
+      const err2 = Result.err<string, number>(42);
 
       // 引数の型をテスト
       Result.compare(
@@ -173,7 +182,7 @@ describe("Result: type tests", () => {
 
   describe("bind", () => {
     it("Ok", () => {
-      const ok = Result.ok("foo") as Result<string, number>;
+      const ok = Result.ok<string, number>("foo");
       const bound = Result.bind(ok, (value) => Result.ok(value.endsWith("a")));
 
       // Ok の型が変換される
@@ -191,7 +200,7 @@ describe("Result: type tests", () => {
 
   describe("mapOk, mapErr", () => {
     it("Ok", () => {
-      const ok = Result.ok("foo") as Result<string, number>;
+      const ok = Result.ok<string, number>("foo");
       const mapped = Result.map((value) => value.endsWith("a"), ok);
       const mappedErr = Result.mapErr((error) => error.toFixed(1), ok);
 
@@ -201,7 +210,7 @@ describe("Result: type tests", () => {
     });
 
     it("Err", () => {
-      const err = Result.err(42) as Result<string, number>;
+      const err = Result.err<string, number>(42);
       const mapped = Result.map((value) => value.endsWith("a"), err);
       const mappedErr = Result.mapErr((error) => error.toFixed(1), err);
 
@@ -213,7 +222,7 @@ describe("Result: type tests", () => {
 
   describe("fold", () => {
     it("Ok", () => {
-      const ok = Result.ok("foo") as Result<string, number>;
+      const ok = Result.ok<string, number>("foo");
       const folded = Result.fold(
         (value) => Symbol(value.substring(1)),
         (error) => Symbol(error.toFixed(1)),
@@ -225,7 +234,7 @@ describe("Result: type tests", () => {
     });
 
     it("Err", () => {
-      const err = Result.err(42) as Result<string, number>;
+      const err = Result.err<string, number>(42);
       const folded = Result.fold(
         (value) => Symbol(value.substring(1)),
         (error) => Symbol(error.toFixed(1)),
@@ -239,7 +248,7 @@ describe("Result: type tests", () => {
 
   describe("iter, iterErr", () => {
     it("Ok", () => {
-      const ok = Result.ok("foo") as Result<string, number>;
+      const ok = Result.ok<string, number>("foo");
 
       // 引数の型をテスト
       Result.iter((value) => assertType<Equal<typeof value, string>>(), ok);
@@ -247,7 +256,7 @@ describe("Result: type tests", () => {
     });
 
     it("Err", () => {
-      const err = Result.err(42) as Result<string, number>;
+      const err = Result.err<string, number>(42);
 
       // 引数の型をテスト
       Result.iter((value) => assertType<Equal<typeof value, string>>(), err);
@@ -268,7 +277,7 @@ describe("Result: type tests", () => {
       const option = Result.toOption(err);
 
       // 型を指定しないと unknown になる
-      assertType<Equal<typeof option, Option<unknown>>>();
+      assertType<Equal<typeof option, Option<never>>>();
     });
   });
 });

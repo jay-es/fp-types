@@ -29,12 +29,12 @@ export class Either<L, R> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static left<L, R = any>(left: L): Either<L, R> {
+  static left<L = any, R = any>(left: L): Either<L, R> {
     return new Either({ type: "Left", [lll]: left });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static right<R, L = any>(right: R): Either<L, R> {
+  static right<L = any, R = any>(right: R): Either<L, R> {
     return new Either({ type: "Right", [rrr]: right });
   }
 

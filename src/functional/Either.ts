@@ -13,12 +13,12 @@ export type Right<R> = {
 
 export type Either<L, R> = Left<L> | Right<R>;
 
-export const left = <L>(left: L): Left<L> => ({
+export const left = <L = never, R = never>(left: L): Either<L, R> => ({
   type: "Left",
   left,
 });
 
-export const right = <R>(right: R): Right<R> => ({
+export const right = <L = never, R = never>(right: R): Either<L, R> => ({
   type: "Right",
   right,
 });

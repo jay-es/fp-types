@@ -1,11 +1,20 @@
 import { describe, expect, it } from "vitest";
-import { assertType, Equal } from "~~/test/assert";
+import { assertType, Equal, NotEqual } from "~~/test/assert";
 import { Either, Left, Option, Right } from ".";
 
 describe("Either: type tests", () => {
+  it("union type", () => {
+    const left = Either.left("foo");
+    const right = Either.right(42);
+    const value = Math.random() ? left : right;
+
+    assertType<NotEqual<typeof left, Left<string>>>();
+    assertType<Equal<typeof value, Either<string, number>>>();
+  });
+
   describe("isLeft, isRight", () => {
     it("Left", () => {
-      const left = Either.left("foo") as Either<string, number>;
+      const left = Either.left<string, number>("foo");
 
       if (Either.isLeft(left)) {
         assertType<Equal<typeof left, Left<string>>>();
@@ -17,7 +26,7 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right = Either.right(42) as Either<string, number>;
+      const right = Either.right<string, number>(42);
 
       if (Either.isLeft(right)) {
         assertType<Equal<typeof right, Left<string>>>();
@@ -31,7 +40,7 @@ describe("Either: type tests", () => {
 
   describe("findLeft, findRight", () => {
     it("Left", () => {
-      const left = Either.left("foo") as Either<string, number>;
+      const left = Either.left<string, number>("foo");
       const optionLeft = Either.findLeft(left);
       const optionRight = Either.findRight(left);
 
@@ -41,7 +50,7 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right = Either.right(42) as Either<string, number>;
+      const right = Either.right<string, number>(42);
       const optionLeft = Either.findLeft(right);
       const optionRight = Either.findRight(right);
 
@@ -53,7 +62,7 @@ describe("Either: type tests", () => {
 
   describe("getLeft, getRight", () => {
     it("Left", () => {
-      const left = Either.left("foo") as Either<string, number>;
+      const left = Either.left<string, number>("foo");
 
       const value = Either.getLeft(left);
       assertType<Equal<typeof value, string>>();
@@ -66,7 +75,7 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right = Either.right(42) as Either<string, number>;
+      const right = Either.right<string, number>(42);
 
       expect(() => {
         // 実際にはエラーになるが、string に推論される
@@ -81,8 +90,8 @@ describe("Either: type tests", () => {
 
   describe("equal", () => {
     it("Left", () => {
-      const left1 = Either.left("foo") as Either<string, number>;
-      const left2 = Either.left("foo") as Either<string, number>;
+      const left1 = Either.left<string, number>("foo");
+      const left2 = Either.left<string, number>("foo");
 
       // 引数の型をテスト
       Either.equal(
@@ -102,8 +111,8 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right1 = Either.right(42) as Either<string, number>;
-      const right2 = Either.right(42) as Either<string, number>;
+      const right1 = Either.right<string, number>(42);
+      const right2 = Either.right<string, number>(42);
 
       // 引数の型をテスト
       Either.equal(
@@ -125,8 +134,8 @@ describe("Either: type tests", () => {
 
   describe("equal", () => {
     it("Left", () => {
-      const left1 = Either.left("foo") as Either<string, number>;
-      const left2 = Either.left("foo") as Either<string, number>;
+      const left1 = Either.left<string, number>("foo");
+      const left2 = Either.left<string, number>("foo");
 
       // 引数の型をテスト
       Either.compare(
@@ -146,8 +155,8 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right1 = Either.right(42) as Either<string, number>;
-      const right2 = Either.right(42) as Either<string, number>;
+      const right1 = Either.right<string, number>(42);
+      const right2 = Either.right<string, number>(42);
 
       // 引数の型をテスト
       Either.compare(
@@ -169,7 +178,7 @@ describe("Either: type tests", () => {
 
   describe("mapLeft, mapRight", () => {
     it("Left", () => {
-      const left = Either.left("foo") as Either<string, number>;
+      const left = Either.left<string, number>("foo");
       const optionLeft = Either.mapLeft((value) => value.endsWith("a"), left);
       const optionRight = Either.mapRight((value) => value.toFixed(1), left);
 
@@ -179,7 +188,7 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right = Either.right(42) as Either<string, number>;
+      const right = Either.right<string, number>(42);
       const optionLeft = Either.mapLeft((value) => value.endsWith("a"), right);
       const optionRight = Either.mapRight((value) => value.toFixed(1), right);
 
@@ -191,7 +200,7 @@ describe("Either: type tests", () => {
 
   describe("map", () => {
     it("Left", () => {
-      const left = Either.left("foo") as Either<string, number>;
+      const left = Either.left<string, number>("foo");
       const mapped = Either.map(
         (value) => value.endsWith("a"),
         (value) => value.toFixed(1),
@@ -203,7 +212,7 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right = Either.right(42) as Either<string, number>;
+      const right = Either.right<string, number>(42);
       const mapped = Either.map(
         (value) => value.endsWith("a"),
         (value) => value.toFixed(1),
@@ -217,7 +226,7 @@ describe("Either: type tests", () => {
 
   describe("fold", () => {
     it("Left", () => {
-      const left = Either.left("foo") as Either<string, number>;
+      const left = Either.left<string, number>("foo");
       const folded = Either.fold(
         (value) => Symbol(value.substring(1)),
         (value) => Symbol(value.toFixed(1)),
@@ -229,7 +238,7 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right = Either.right(42) as Either<string, number>;
+      const right = Either.right<string, number>(42);
       const folded = Either.fold(
         (value) => Symbol(value.substring(1)),
         (value) => Symbol(value.toFixed(1)),
@@ -243,7 +252,7 @@ describe("Either: type tests", () => {
 
   describe("iter", () => {
     it("Left", () => {
-      const left = Either.left("foo") as Either<string, number>;
+      const left = Either.left<string, number>("foo");
 
       // 引数の型をテスト
       Either.iter(
@@ -254,7 +263,7 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right = Either.right(42) as Either<string, number>;
+      const right = Either.right<string, number>(42);
 
       // 引数の型をテスト
       Either.iter(
@@ -267,7 +276,7 @@ describe("Either: type tests", () => {
 
   describe("forAll", () => {
     it("Left", () => {
-      const left = Either.left("foo") as Either<string, number>;
+      const left = Either.left<string, number>("foo");
       const result = Either.forAll(
         (value) => value.endsWith("a"),
         (value) => value.toFixed() === "bar",
@@ -279,7 +288,7 @@ describe("Either: type tests", () => {
     });
 
     it("Right", () => {
-      const right = Either.right(42) as Either<string, number>;
+      const right = Either.right<string, number>(42);
       const result = Either.forAll(
         (value) => value.endsWith("a"),
         (value) => value.toFixed() === "bar",

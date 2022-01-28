@@ -29,12 +29,12 @@ export class Result<T, E> {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static ok<T, E = any>(value: T): Result<T, E> {
+  static ok<T = any, E = any>(value: T): Result<T, E> {
     return new Result({ type: "Ok", [vvv]: value });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static err<E, T = any>(error: E): Result<T, E> {
+  static err<T = any, E = any>(error: E): Result<T, E> {
     return new Result({ type: "Err", [eee]: error });
   }
 

@@ -13,12 +13,12 @@ export type Err<E> = {
 
 export type Result<T, E> = Ok<T> | Err<E>;
 
-export const ok = <T>(value: T): Ok<T> => ({
+export const ok = <T = never, E = never>(value: T): Result<T, E> => ({
   type: "Ok",
   value,
 });
 
-export const err = <E>(error: E): Err<E> => ({
+export const err = <T = never, E = never>(error: E): Result<T, E> => ({
   type: "Err",
   error,
 });

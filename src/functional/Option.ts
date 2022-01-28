@@ -12,12 +12,12 @@ export type None = {
 
 export type Option<T> = Some<T> | None;
 
-export const some = <T>(value: T): Some<T> => ({
+export const some = <T>(value: T): Option<T> => ({
   type: "Some",
   value,
 });
 
-export const none = (): None => ({
+export const none = (): Option<never> => ({
   type: "None",
 });
 
