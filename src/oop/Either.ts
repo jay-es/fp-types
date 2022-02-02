@@ -2,48 +2,48 @@ import { compareFn, equalFn, makeNever } from "~/shared/helpers";
 import { flow } from "~/utils";
 import { Option } from "./Option";
 
-const lll = Symbol();
-const rrr = Symbol();
+const _left = Symbol();
+const _right = Symbol();
 
 type Left<L> = {
-  [lll]: L;
-  [rrr]?: undefined;
+  [_left]: L;
+  [_right]?: undefined;
 };
 
 type Right<R> = {
-  [lll]?: undefined;
-  [rrr]: R;
+  [_left]?: undefined;
+  [_right]: R;
 };
 
 export class Either<L, R> {
   readonly #type: "Left" | "Right";
-  readonly [lll]?: L;
-  readonly [rrr]?: R;
+  readonly [_left]?: L;
+  readonly [_right]?: R;
 
   private constructor(
     options: ({ type: "Left" } & Left<L>) | ({ type: "Right" } & Right<R>),
   ) {
     this.#type = options.type;
-    this[lll] = options[lll];
-    this[rrr] = options[rrr];
+    this[_left] = options[_left];
+    this[_right] = options[_right];
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static left<L = any, R = any>(left: L): Either<L, R> {
-    return new Either({ type: "Left", [lll]: left });
+    return new Either({ type: "Left", [_left]: left });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   static right<L = any, R = any>(right: R): Either<L, R> {
-    return new Either({ type: "Right", [rrr]: right });
+    return new Either({ type: "Right", [_right]: right });
   }
 
   private match<L2, R2>(
     leftFn: (left: L) => L2,
     rightFn: (right: R) => R2,
   ): L2 | R2 {
-    if (this.isLeft()) return leftFn(this[lll]);
-    if (this.isRight()) return rightFn(this[rrr]);
+    if (this.isLeft()) return leftFn(this[_left]);
+    if (this.isRight()) return rightFn(this[_right]);
     return makeNever(this.#type);
   }
 
@@ -65,7 +65,7 @@ export class Either<L, R> {
 
   getLeft(): L {
     if (this.isLeft()) {
-      return this[lll];
+      return this[_left];
     }
 
     throw new Error("Cannot get Right from Left");
@@ -73,7 +73,7 @@ export class Either<L, R> {
 
   getRight(): R {
     if (this.isRight()) {
-      return this[rrr];
+      return this[_right];
     }
 
     throw new Error("Cannot get Left from Right");
@@ -85,11 +85,11 @@ export class Either<L, R> {
     rightFn: (r1: R, r2: R) => boolean = equalFn,
   ): boolean {
     if (this.isLeft() && other.isLeft()) {
-      return leftFn(this[lll], other[lll]);
+      return leftFn(this[_left], other[_left]);
     }
 
     if (this.isRight() && other.isRight()) {
-      return rightFn(this[rrr], other[rrr]);
+      return rightFn(this[_right], other[_right]);
     }
 
     return false;
@@ -101,11 +101,11 @@ export class Either<L, R> {
     rightFn: (r1: R, r2: R) => number = compareFn,
   ): number {
     if (this.isLeft() && other.isLeft()) {
-      return leftFn(this[lll], other[lll]);
+      return leftFn(this[_left], other[_left]);
     }
 
     if (this.isRight() && other.isRight()) {
-      return rightFn(this[rrr], other[rrr]);
+      return rightFn(this[_right], other[_right]);
     }
 
     return this.isLeft() ? -1 : 1;

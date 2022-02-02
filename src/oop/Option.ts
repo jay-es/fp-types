@@ -2,25 +2,25 @@ import { compareFn, equalFn, makeNever } from "~/shared/helpers";
 import { flow } from "~/utils";
 import { Result } from "./Result";
 
-const vvv = Symbol();
+const _value = Symbol();
 
 type Some<T> = {
-  [vvv]: T;
+  [_value]: T;
 };
 
 type None = {
-  [vvv]?: undefined;
+  [_value]?: undefined;
 };
 
 type Type = "Some" | "None";
 
 export class Option<T> {
   readonly #type: Type;
-  readonly [vvv]?: T;
+  readonly [_value]?: T;
 
   private constructor(type: Type, value?: T) {
     this.#type = type;
-    this[vvv] = value;
+    this[_value] = value;
   }
 
   static some<T>(value: T): Option<T> {
@@ -33,7 +33,7 @@ export class Option<T> {
   }
 
   private match<U, N>(someFn: (value: T) => U, none: N): U | N {
-    if (this.isSome()) return someFn(this[vvv]);
+    if (this.isSome()) return someFn(this[_value]);
     if (this.isNone()) return none;
     return makeNever(this.#type);
   }
@@ -47,12 +47,12 @@ export class Option<T> {
   }
 
   value(defaultValue: T): T {
-    return this.isSome() ? this[vvv] : defaultValue;
+    return this.isSome() ? this[_value] : defaultValue;
   }
 
   get(): T {
     if (this.isSome()) {
-      return this[vvv];
+      return this[_value];
     }
 
     throw new Error("Cannot get value of None");
@@ -60,7 +60,7 @@ export class Option<T> {
 
   equal(other: Option<T>, fn: (v1: T, v2: T) => boolean = equalFn): boolean {
     if (this.isSome() && other.isSome()) {
-      return fn(this[vvv], other[vvv]);
+      return fn(this[_value], other[_value]);
     }
 
     return this.isNone() && other.isNone();
@@ -68,7 +68,7 @@ export class Option<T> {
 
   compare(other: Option<T>, fn: (v1: T, v2: T) => number = compareFn): number {
     if (this.isSome() && other.isSome()) {
-      return fn(this[vvv], other[vvv]);
+      return fn(this[_value], other[_value]);
     }
 
     return compareFn(this.isSome(), other.isSome());
@@ -88,7 +88,7 @@ export class Option<T> {
 
   iter(fn: (value: T) => void): void {
     if (this.isSome()) {
-      fn(this[vvv]);
+      fn(this[_value]);
     }
   }
 

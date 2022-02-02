@@ -1,40 +1,44 @@
 import { compareFn, equalFn } from "~/shared/helpers";
 import { Option } from ".";
 
+const _type = Symbol();
+const _value = Symbol();
+const _error = Symbol();
+
 export type Ok<T> = {
-  type: "Ok";
-  value: T;
+  [_type]: "Ok";
+  [_value]: T;
 };
 
 export type Err<E> = {
-  type: "Err";
-  error: E;
+  [_type]: "Err";
+  [_error]: E;
 };
 
 export type Result<T, E> = Ok<T> | Err<E>;
 
 export const ok = <T = never, E = never>(value: T): Result<T, E> => ({
-  type: "Ok",
-  value,
+  [_type]: "Ok",
+  [_value]: value,
 });
 
 export const err = <T = never, E = never>(error: E): Result<T, E> => ({
-  type: "Err",
-  error,
+  [_type]: "Err",
+  [_error]: error,
 });
 
 export const isOk = <T, E>(result: Result<T, E>): result is Ok<T> =>
-  result.type === "Ok";
+  result[_type] === "Ok";
 
 export const isErr = <T, E>(result: Result<T, E>): result is Err<E> =>
-  result.type === "Err";
+  result[_type] === "Err";
 
 export const value = <T, E>(result: Result<T, E>, defaultValue: T): T =>
-  isOk(result) ? result.value : defaultValue;
+  isOk(result) ? result[_value] : defaultValue;
 
 export const getOk = <T, E>(result: Result<T, E>): T => {
   if (isOk(result)) {
-    return result.value;
+    return result[_value];
   }
 
   throw new Error("Cannot get Ok from Err");
@@ -42,7 +46,7 @@ export const getOk = <T, E>(result: Result<T, E>): T => {
 
 export const getErr = <T, E>(result: Result<T, E>): E => {
   if (isErr(result)) {
-    return result.error;
+    return result[_error];
   }
 
   throw new Error("Cannot get Err from Ok");
@@ -55,11 +59,11 @@ export const equal = <T, E>(
   errFn: (e1: E, e2: E) => boolean = equalFn,
 ): boolean => {
   if (isOk(result) && isOk(other)) {
-    return okFn(result.value, other.value);
+    return okFn(result[_value], other[_value]);
   }
 
   if (isErr(result) && isErr(other)) {
-    return errFn(result.error, other.error);
+    return errFn(result[_error], other[_error]);
   }
 
   return false;
@@ -72,11 +76,11 @@ export const compare = <T, E>(
   errFn: (e1: E, e2: E) => number = compareFn,
 ): number => {
   if (isOk(result) && isOk(other)) {
-    return okFn(result.value, other.value);
+    return okFn(result[_value], other[_value]);
   }
 
   if (isErr(result) && isErr(other)) {
-    return errFn(result.error, other.error);
+    return errFn(result[_error], other[_error]);
   }
 
   return isOk(result) ? -1 : 1;
@@ -85,37 +89,37 @@ export const compare = <T, E>(
 export const bind = <T, E, U>(
   result: Result<T, E>,
   okFn: (value: T) => Result<U, E>,
-): Result<U, E> => (isOk(result) ? okFn(result.value) : result);
+): Result<U, E> => (isOk(result) ? okFn(result[_value]) : result);
 
 export const map = <T, E, U>(
   okFn: (value: T) => U,
   result: Result<T, E>,
-): Result<U, E> => (isOk(result) ? ok(okFn(result.value)) : result);
+): Result<U, E> => (isOk(result) ? ok(okFn(result[_value])) : result);
 
 export const mapErr = <T, E, F>(
   errFn: (error: E) => F,
   result: Result<T, E>,
-): Result<T, F> => (isErr(result) ? err(errFn(result.error)) : result);
+): Result<T, F> => (isErr(result) ? err(errFn(result[_error])) : result);
 
 export const fold = <T, E, U>(
   okFn: (value: T) => U,
   errFn: (error: E) => U,
   result: Result<T, E>,
-): U => (isOk(result) ? okFn(result.value) : errFn(result.error));
+): U => (isOk(result) ? okFn(result[_value]) : errFn(result[_error]));
 
 export const iter = <T, E>(
   okFn: (value: T) => void,
   result: Result<T, E>,
 ): void => {
-  isOk(result) && okFn(result.value);
+  isOk(result) && okFn(result[_value]);
 };
 
 export const iterErr = <T, E>(
   errFn: (error: E) => void,
   result: Result<T, E>,
 ): void => {
-  isErr(result) && errFn(result.error);
+  isErr(result) && errFn(result[_error]);
 };
 
 export const toOption = <T, E>(result: Result<T, E>): Option<T> =>
-  isOk(result) ? Option.some(result.value) : Option.none();
+  isOk(result) ? Option.some(result[_value]) : Option.none();
