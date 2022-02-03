@@ -33,7 +33,7 @@ describe("flow", () => {
   });
 
   it("max", () => {
-    const fn1 = (n: number) => !!n;
+    const fn1 = (n: number) => Boolean(n);
     const fn2 = (b: boolean) => Number(b);
 
     const comp = flow(
