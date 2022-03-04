@@ -8,7 +8,4 @@ export default defineConfig({
       "~/": "/src/",
     },
   },
-  test: {
-    exclude: ["**/_old/**"],
-  },
 });

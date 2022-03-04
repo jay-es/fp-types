@@ -31,7 +31,7 @@ module.exports = /** @type {import("eslint/lib/shared/types").ConfigData} */ ({
   },
   overrides: [
     {
-      files: ["*.spec.ts", "src/oop/_old/**"],
+      files: ["*.spec.ts"],
       rules: {
         "@typescript-eslint/no-unused-vars": ["error", { args: "none" }],
       },
