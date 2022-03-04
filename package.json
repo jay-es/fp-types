@@ -7,6 +7,8 @@
     "node": "^14"
   },
   "scripts": {
+    "prebuild": "node -e 'fs.rmSync(`dist`, { recursive: true, force: true })'",
+    "build": "tsc",
     "lint": "eslint src",
     "test": "vitest src",
     "typeCheck": "tsc --noEmit"
