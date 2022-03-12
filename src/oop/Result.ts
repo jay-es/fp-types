@@ -1,4 +1,4 @@
-import { compareFn, equalFn, makeNever } from "~/shared/helpers";
+import { compareFn, equalFn, throwError } from "~/shared/helpers";
 import { flow } from "~/utils";
 import { Option } from "./Option";
 
@@ -41,7 +41,7 @@ export class Result<T, E> {
   private match<U, F>(okFn: (value: T) => U, errFn: (error: E) => F): U | F {
     if (this.isOk()) return okFn(this[_value]);
     if (this.isErr()) return errFn(this[_error]);
-    return makeNever(this.#type);
+    return throwError(this.#type);
   }
 
   isOk(): this is Ok<T> {

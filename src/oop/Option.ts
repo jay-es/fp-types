@@ -1,4 +1,4 @@
-import { compareFn, equalFn, makeNever } from "~/shared/helpers";
+import { compareFn, equalFn, throwError } from "~/shared/helpers";
 import { flow } from "~/utils";
 import { Result } from "./Result";
 
@@ -35,7 +35,7 @@ export class Option<T> {
   private match<U, N>(someFn: (value: T) => U, none: N): U | N {
     if (this.isSome()) return someFn(this[_value]);
     if (this.isNone()) return none;
-    return makeNever(this.#type);
+    return throwError(this.#type);
   }
 
   isSome(): this is Some<T> {

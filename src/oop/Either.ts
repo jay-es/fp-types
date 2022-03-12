@@ -1,4 +1,4 @@
-import { compareFn, equalFn, makeNever } from "~/shared/helpers";
+import { compareFn, equalFn, throwError } from "~/shared/helpers";
 import { flow } from "~/utils";
 import { Option } from "./Option";
 
@@ -44,7 +44,7 @@ export class Either<L, R> {
   ): L2 | R2 {
     if (this.isLeft()) return leftFn(this[_left]);
     if (this.isRight()) return rightFn(this[_right]);
-    return makeNever(this.#type);
+    return throwError(this.#type);
   }
 
   isLeft(): this is Left<L> {
